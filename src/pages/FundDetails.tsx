@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, ChevronRight, AlertCircle } from 'lucide-react';
@@ -26,6 +25,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { mockMutualFunds } from '@/utils/mockData';
+import { MutualFund } from '@/types'; // Import the MutualFund type
 
 const FundDetails = () => {
   const { id } = useParams<{ id: string }>();
