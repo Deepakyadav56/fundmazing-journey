@@ -1,7 +1,9 @@
 
 import { mockMutualFunds } from "@/utils/mockData";
 
-export type MutualFund = typeof mockMutualFunds[number];
+export type MutualFund = typeof mockMutualFunds[number] & {
+  trending?: boolean;
+};
 
 export interface Goal {
   id: string;

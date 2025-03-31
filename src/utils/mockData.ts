@@ -1,4 +1,3 @@
-
 // Mock mutual fund data
 export interface MutualFund {
   id: string;
@@ -15,6 +14,7 @@ export interface MutualFund {
   aum: number; // Assets Under Management in crores
   fundManager: string;
   description: string;
+  trending?: boolean;
 }
 
 export const mockMutualFunds: MutualFund[] = [
@@ -32,7 +32,8 @@ export const mockMutualFunds: MutualFund[] = [
     },
     aum: 2345,
     fundManager: "Shreyash Devalkar",
-    description: "A large cap fund investing in blue chip companies with a history of strong performance and stability."
+    description: "A large cap fund investing in blue chip companies with a history of strong performance and stability.",
+    trending: true
   },
   {
     id: "fund2",
@@ -48,7 +49,8 @@ export const mockMutualFunds: MutualFund[] = [
     },
     aum: 1567,
     fundManager: "R. Srinivasan",
-    description: "A small cap fund that aims to identify potential future leaders in the small cap space for long-term growth."
+    description: "A small cap fund that aims to identify potential future leaders in the small cap space for long-term growth.",
+    trending: true
   },
   {
     id: "fund3",
