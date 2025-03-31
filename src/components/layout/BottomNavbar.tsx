@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, PieChart, User, TrendingUp } from 'lucide-react';
+import { Home, Search, PieChart, User, TrendingUp, Bell } from 'lucide-react';
 
 const BottomNavbar = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ const BottomNavbar = () => {
     { path: "/dashboard", name: "Home", icon: Home },
     { path: "/explore", name: "Explore", icon: Search },
     { path: "/market-news", name: "Market", icon: TrendingUp },
-    { path: "/portfolio", name: "Portfolio", icon: PieChart },
+    { path: "/notifications", name: "Alerts", icon: Bell },
     { path: "/profile", name: "Profile", icon: User },
   ];
   

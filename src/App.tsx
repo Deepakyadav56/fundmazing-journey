@@ -21,6 +21,12 @@ import FundComparison from "./pages/FundComparison";
 import MarketNews from "./pages/MarketNews";
 import Watchlist from "./pages/Watchlist";
 import NewsDetail from "./pages/NewsDetail";
+import FundAnalysis from "./pages/FundAnalysis";
+import Notifications from "./pages/Notifications";
+import InvestmentCart from "./pages/InvestmentCart";
+import PaymentGateway from "./pages/PaymentGateway";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import KYCVerification from "./pages/KYCVerification";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +40,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/fund/:id" element={<FundDetails />} />
+          <Route path="/fund-analysis/:id" element={<FundAnalysis />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/calculator" element={<Calculator />} />
@@ -45,6 +52,11 @@ const App = () => (
           <Route path="/market-news" element={<MarketNews />} />
           <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/cart" element={<InvestmentCart />} />
+          <Route path="/payment-gateway" element={<PaymentGateway />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/kyc-verification" element={<KYCVerification />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

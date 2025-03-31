@@ -10,7 +10,9 @@ import {
   Calculator, 
   Share2,
   HelpCircle, 
-  LogOut 
+  LogOut,
+  ShoppingCart,
+  Bell 
 } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent } from '@/components/ui/card';
@@ -41,26 +43,38 @@ const Profile = () => {
       icon: User,
       title: "Personal Information",
       subtitle: "Manage your profile details",
-      action: () => toast({ title: "Profile information coming soon" }),
+      action: () => navigate('/kyc-verification'),
     },
     {
       icon: Shield,
       title: "KYC Information",
-      subtitle: "Your KYC is complete",
-      action: () => toast({ title: "KYC information coming soon" }),
-      badge: "Verified"
+      subtitle: "Complete your KYC",
+      action: () => navigate('/kyc-verification'),
+      badge: "Pending"
     },
     {
       icon: Wallet,
       title: "Bank Accounts",
       subtitle: "Manage your linked accounts",
-      action: () => toast({ title: "Bank account management coming soon" }),
+      action: () => navigate('/kyc-verification'),
     },
     {
       icon: FileText,
       title: "Transaction History",
       subtitle: "View all your past transactions",
-      action: () => toast({ title: "Transaction history coming soon" }),
+      action: () => navigate('/transactions'),
+    },
+    {
+      icon: Bell,
+      title: "Notifications",
+      subtitle: "View your alerts and updates",
+      action: () => navigate('/notifications'),
+    },
+    {
+      icon: ShoppingCart,
+      title: "Investment Cart",
+      subtitle: "View your pending investments",
+      action: () => navigate('/cart'),
     },
     {
       icon: Calculator,
@@ -120,7 +134,13 @@ const Profile = () => {
                   )}
                 </div>
                 {option.badge ? (
-                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                  <span className={`px-2 py-1 ${
+                    option.badge === 'Verified' 
+                      ? 'bg-green-100 text-green-800' 
+                      : option.badge === 'Pending'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-gray-100 text-gray-800'
+                  } text-xs rounded-full`}>
                     {option.badge}
                   </span>
                 ) : (
