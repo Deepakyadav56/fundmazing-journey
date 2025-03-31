@@ -61,3 +61,20 @@ export interface SIPInvestment {
   totalInvested: number;
   currentValue: number;
 }
+
+export interface MarketIndex {
+  name: string;
+  value: string;
+  change: string;
+  changePercent: number;
+  trending: boolean;
+}
+
+export interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  read: boolean;
+  type?: 'transaction' | 'sip' | 'market' | 'system';
+}

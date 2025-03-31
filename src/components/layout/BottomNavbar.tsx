@@ -29,7 +29,9 @@ const BottomNavbar = () => {
             }`}
           >
             <div className={`relative ${isActive ? 'animate-bounce-subtle' : ''}`}>
-              <item.icon size={20} />
+              <div className={`p-1.5 rounded-full ${isActive ? 'bg-green-100' : ''}`}>
+                <item.icon size={20} />
+              </div>
               {isActive && (
                 <span className="absolute -top-1 -right-1 h-2 w-2 bg-fundeasy-green rounded-full" />
               )}
