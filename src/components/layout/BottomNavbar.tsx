@@ -9,6 +9,7 @@ const BottomNavbar = () => {
   const navItems = [
     { path: "/dashboard", name: "Home", icon: Home },
     { path: "/explore", name: "Explore", icon: Search },
+    { path: "/market-news", name: "Market", icon: TrendingUp },
     { path: "/portfolio", name: "Portfolio", icon: PieChart },
     { path: "/profile", name: "Profile", icon: User },
   ];

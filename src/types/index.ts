@@ -31,3 +31,33 @@ export interface Transaction {
   status: 'completed' | 'pending' | 'failed';
   paymentMethod: 'upi' | 'netbanking';
 }
+
+export interface WatchlistItem {
+  id: string;
+  fundId: string;
+  addedDate: Date;
+  notes?: string;
+}
+
+export interface MarketNews {
+  id: string;
+  title: string;
+  snippet: string;
+  content: string;
+  date: Date;
+  source: string;
+  imageUrl?: string;
+  category: 'market' | 'funds' | 'economy' | 'policy';
+}
+
+export interface SIPInvestment {
+  id: string;
+  fundId: string;
+  amount: number;
+  frequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+  startDate: Date;
+  nextDate: Date;
+  status: 'active' | 'paused' | 'completed';
+  totalInvested: number;
+  currentValue: number;
+}

@@ -15,6 +15,12 @@ import Calculator from "./pages/Calculator";
 import NotFound from "./pages/NotFound";
 import Transactions from "./pages/Transactions";
 import Goals from "./pages/Goals";
+import SIPDashboard from "./pages/SIPDashboard";
+import InvestmentHistory from "./pages/InvestmentHistory";
+import FundComparison from "./pages/FundComparison";
+import MarketNews from "./pages/MarketNews";
+import Watchlist from "./pages/Watchlist";
+import NewsDetail from "./pages/NewsDetail";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +39,12 @@ const App = () => (
           <Route path="/calculator" element={<Calculator />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/goals" element={<Goals />} />
+          <Route path="/sip-dashboard" element={<SIPDashboard />} />
+          <Route path="/investment-history" element={<InvestmentHistory />} />
+          <Route path="/fund-comparison" element={<FundComparison />} />
+          <Route path="/market-news" element={<MarketNews />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
+          <Route path="/watchlist" element={<Watchlist />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
