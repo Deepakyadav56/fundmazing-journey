@@ -64,6 +64,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				fundeasy: {
+					blue: '#2A5BFF',
+					'light-blue': '#5A7AFF',
+					'dark-blue': '#1D40D6',
 					green: '#00C853',
 					'light-green': '#66FFA6',
 					'dark-green': '#009624',

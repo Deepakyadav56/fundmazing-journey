@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, TrendingUp, ChevronRight, AlertCircle } from 'lucide-react';
+import { ArrowLeft, TrendingUp, ChevronRight, AlertCircle, PieChart } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -13,24 +14,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useToast } from '@/hooks/use-toast';
 import { mockMutualFunds } from '@/utils/mockData';
-import { MutualFund } from '@/types'; // Import the MutualFund type
 
 const FundDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   const fund = mockMutualFunds.find(f => f.id === id);
   
@@ -87,7 +75,7 @@ const FundDetails = () => {
               <p className="text-2xl font-bold">₹{fund.navValue.toFixed(2)}</p>
               <span className="text-xs text-gray-500">NAV as of today</span>
             </div>
-            <div className="flex items-center text-fundeasy-green">
+            <div className="flex items-center text-fundeasy-blue">
               <TrendingUp size={20} className="mr-1" />
               <span className="font-medium">{fund.returns.oneYear}%</span>
               <span className="text-xs ml-1">1Y</span>
@@ -110,7 +98,7 @@ const FundDetails = () => {
                 <Line 
                   type="monotone" 
                   dataKey="value" 
-                  stroke="#00C853" 
+                  stroke="#2A5BFF" 
                   strokeWidth={2} 
                 />
               </LineChart>
@@ -125,7 +113,7 @@ const FundDetails = () => {
             ].map(item => (
               <div key={item.period}>
                 <p className="text-xs text-gray-500">{item.period} Returns</p>
-                <p className="font-medium text-fundeasy-green">{item.return}%</p>
+                <p className="font-medium text-fundeasy-blue">{item.return}%</p>
               </div>
             ))}
           </div>
@@ -213,7 +201,7 @@ const FundDetails = () => {
                     <div className="mt-2 bg-gray-200 rounded-full h-4 overflow-hidden">
                       {fund.category === 'Equity' ? (
                         <>
-                          <div className="bg-fundeasy-green h-4" style={{ width: '85%' }}></div>
+                          <div className="bg-fundeasy-blue h-4" style={{ width: '85%' }}></div>
                           <div className="flex justify-between text-xs mt-1">
                             <span>Equity: 85%</span>
                             <span>Debt: 15%</span>
@@ -221,7 +209,7 @@ const FundDetails = () => {
                         </>
                       ) : fund.category === 'Debt' ? (
                         <>
-                          <div className="bg-fundeasy-green h-4" style={{ width: '10%' }}></div>
+                          <div className="bg-fundeasy-blue h-4" style={{ width: '10%' }}></div>
                           <div className="flex justify-between text-xs mt-1">
                             <span>Equity: 10%</span>
                             <span>Debt: 90%</span>
@@ -229,7 +217,7 @@ const FundDetails = () => {
                         </>
                       ) : (
                         <>
-                          <div className="bg-fundeasy-green h-4" style={{ width: '60%' }}></div>
+                          <div className="bg-fundeasy-blue h-4" style={{ width: '60%' }}></div>
                           <div className="flex justify-between text-xs mt-1">
                             <span>Equity: 60%</span>
                             <span>Debt: 40%</span>
@@ -278,325 +266,22 @@ const FundDetails = () => {
       
       {/* Investment Buttons */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex gap-4">
-        <InvestmentModal 
-          fund={fund} 
-          type="sip" 
-          buttonText="Start SIP"
-        />
-        <InvestmentModal 
-          fund={fund} 
-          type="lumpsum"
-          buttonText="Invest One-time" 
+        <Button 
+          onClick={() => navigate(`/start-sip/${id}`)}
+          className="flex-1 bg-fundeasy-blue hover:bg-fundeasy-dark-blue h-12"
+        >
+          Start SIP
+        </Button>
+        
+        <Button 
           variant="outline"
-        />
+          onClick={() => navigate(`/cart?fund=${id}&type=lumpsum`)}
+          className="flex-1 h-12 border-fundeasy-blue text-fundeasy-blue"
+        >
+          Invest One-time
+        </Button>
       </div>
     </div>
-  );
-};
-
-interface InvestmentModalProps {
-  fund: MutualFund;
-  type: 'sip' | 'lumpsum';
-  buttonText: string;
-  variant?: 'default' | 'outline';
-}
-
-const InvestmentModal: React.FC<InvestmentModalProps> = ({ 
-  fund, 
-  type, 
-  buttonText,
-  variant = 'default'
-}) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [step, setStep] = useState(1);
-  const [amount, setAmount] = useState(type === 'sip' ? '500' : '5000');
-  const [frequency, setFrequency] = useState('Monthly');
-  const [sipDate, setSipDate] = useState('10');
-  const [paymentMethod, setPaymentMethod] = useState('upi');
-  const [upiId, setUpiId] = useState('');
-  const [bank, setBank] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  
-  const handleContinue = () => {
-    if (step === 1) {
-      // Validate amount
-      if (!amount || parseInt(amount) < (type === 'sip' ? 500 : 5000)) {
-        toast({
-          title: "Invalid amount",
-          description: `Minimum investment is ₹${type === 'sip' ? '500' : '5,000'}`,
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      setStep(2);
-    } else if (step === 2) {
-      // Validate payment details
-      if (paymentMethod === 'upi' && !upiId) {
-        toast({
-          title: "UPI ID required",
-          description: "Please enter your UPI ID",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      if (paymentMethod === 'netbanking' && !bank) {
-        toast({
-          title: "Bank selection required",
-          description: "Please select your bank",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      setStep(3);
-    } else if (step === 3) {
-      // Process payment
-      setIsProcessing(true);
-      
-      setTimeout(() => {
-        setIsProcessing(false);
-        setOpen(false);
-        
-        toast({
-          title: "Investment Successful!",
-          description: `Your ${type === 'sip' ? 'SIP' : 'one-time'} investment of ₹${parseInt(amount).toLocaleString()} is being processed.`,
-        });
-        
-        navigate('/portfolio');
-      }, 2000);
-    }
-  };
-  
-  const handleReset = () => {
-    setStep(1);
-    setAmount(type === 'sip' ? '500' : '5000');
-    setFrequency('Monthly');
-    setSipDate('10');
-    setPaymentMethod('upi');
-    setUpiId('');
-    setBank('');
-    setIsProcessing(false);
-  };
-  
-  return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
-      setOpen(isOpen);
-      if (!isOpen) handleReset();
-    }}>
-      <DialogTrigger asChild>
-        <Button 
-          variant={variant} 
-          className={`flex-1 ${variant === 'default' ? 'bg-fundeasy-green hover:bg-fundeasy-dark-green' : ''}`}
-        >
-          {buttonText}
-        </Button>
-      </DialogTrigger>
-      
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            {step === 1 ? (
-              type === 'sip' ? 'Start SIP' : 'One-time Investment'
-            ) : step === 2 ? (
-              'Payment Method'
-            ) : (
-              'Confirm Investment'
-            )}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div>
-          {step === 1 && (
-            <div className="space-y-4 mt-4">
-              <div>
-                <Label htmlFor="amount">Amount</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5">₹</span>
-                  <Input
-                    id="amount"
-                    type="number"
-                    className="pl-8"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    min={type === 'sip' ? 500 : 5000}
-                    step={type === 'sip' ? 100 : 1000}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Minimum {type === 'sip' ? 'SIP' : 'investment'}: ₹{type === 'sip' ? '500' : '5,000'}
-                </p>
-              </div>
-              
-              {type === 'sip' && (
-                <>
-                  <div>
-                    <Label htmlFor="frequency">Frequency</Label>
-                    <RadioGroup 
-                      id="frequency" 
-                      value={frequency} 
-                      onValueChange={setFrequency}
-                      className="flex gap-4 mt-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Monthly" id="monthly" />
-                        <Label htmlFor="monthly">Monthly</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Quarterly" id="quarterly" />
-                        <Label htmlFor="quarterly">Quarterly</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="sipDate">SIP Date</Label>
-                    <select
-                      id="sipDate"
-                      value={sipDate}
-                      onChange={(e) => setSipDate(e.target.value)}
-                      className="w-full rounded-md border border-gray-300 p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-fundeasy-green"
-                    >
-                      {[1, 5, 10, 15, 20, 25].map(date => (
-                        <option key={date} value={date}>{date}th of every month</option>
-                      ))}
-                    </select>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-          
-          {step === 2 && (
-            <div className="space-y-4 mt-4">
-              <div>
-                <Label>Select Payment Method</Label>
-                <RadioGroup 
-                  value={paymentMethod} 
-                  onValueChange={setPaymentMethod}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2 border rounded-md p-3 mb-2">
-                    <RadioGroupItem value="upi" id="upi" />
-                    <Label htmlFor="upi">UPI</Label>
-                  </div>
-                  <div className="flex items-center space-x-2 border rounded-md p-3">
-                    <RadioGroupItem value="netbanking" id="netbanking" />
-                    <Label htmlFor="netbanking">Netbanking</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              
-              {paymentMethod === 'upi' && (
-                <div>
-                  <Label htmlFor="upiId">UPI ID</Label>
-                  <Input
-                    id="upiId"
-                    placeholder="example@upi"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
-                  />
-                </div>
-              )}
-              
-              {paymentMethod === 'netbanking' && (
-                <div>
-                  <Label htmlFor="bank">Select Bank</Label>
-                  <select
-                    id="bank"
-                    value={bank}
-                    onChange={(e) => setBank(e.target.value)}
-                    className="w-full rounded-md border border-gray-300 p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-fundeasy-green"
-                  >
-                    <option value="">Select a bank</option>
-                    <option value="sbi">State Bank of India</option>
-                    <option value="hdfc">HDFC Bank</option>
-                    <option value="icici">ICICI Bank</option>
-                    <option value="axis">Axis Bank</option>
-                  </select>
-                </div>
-              )}
-            </div>
-          )}
-          
-          {step === 3 && (
-            <div className="mt-4">
-              <div className="bg-gray-50 rounded-md p-4">
-                <h3 className="text-lg font-medium mb-4">Investment Summary</h3>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Fund Name</span>
-                    <span className="font-medium">{fund.name}</span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Investment Type</span>
-                    <span className="font-medium">
-                      {type === 'sip' ? `SIP (${frequency})` : 'One-time'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Amount</span>
-                    <span className="font-medium">₹{parseInt(amount).toLocaleString()}</span>
-                  </div>
-                  
-                  {type === 'sip' && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">SIP Date</span>
-                      <span className="font-medium">{sipDate}th of every month</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Payment Method</span>
-                    <span className="font-medium">
-                      {paymentMethod === 'upi' ? `UPI (${upiId})` : `Netbanking (${bank})`}
-                    </span>
-                  </div>
-                  
-                  <div className="border-t border-gray-200 pt-2 mt-2">
-                    <p className="text-xs text-gray-500">
-                      By confirming, you agree to the scheme information document and fund policies.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        <div className="flex gap-3 mt-4">
-          {step > 1 && step < 3 && (
-            <Button 
-              variant="outline" 
-              onClick={() => setStep(step - 1)}
-              className="flex-1"
-            >
-              Back
-            </Button>
-          )}
-          
-          <Button 
-            onClick={handleContinue} 
-            disabled={isProcessing}
-            className="flex-1 bg-fundeasy-green hover:bg-fundeasy-dark-green"
-          >
-            {isProcessing ? 
-              'Processing...' : 
-              step === 3 ? 
-                'Confirm' : 
-                'Continue'
-            }
-            {!isProcessing && step !== 3 && <ChevronRight size={16} className="ml-1" />}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
   );
 };
 

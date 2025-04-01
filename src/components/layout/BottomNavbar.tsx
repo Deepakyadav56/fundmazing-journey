@@ -24,16 +24,16 @@ const BottomNavbar = () => {
             to={item.path} 
             className={`flex flex-col items-center justify-center w-16 ${
               isActive 
-                ? 'text-fundeasy-green font-medium' 
+                ? 'text-fundeasy-blue font-medium' 
                 : 'text-gray-500'
             }`}
           >
             <div className={`relative ${isActive ? 'animate-bounce-subtle' : ''}`}>
-              <div className={`p-1.5 rounded-full ${isActive ? 'bg-green-100' : ''}`}>
+              <div className={`p-1.5 rounded-full ${isActive ? 'bg-blue-100' : ''}`}>
                 <item.icon size={20} />
               </div>
               {isActive && (
-                <span className="absolute -top-1 -right-1 h-2 w-2 bg-fundeasy-green rounded-full" />
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-fundeasy-blue rounded-full" />
               )}
             </div>
             <span className="text-xs mt-1">{item.name}</span>

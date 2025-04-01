@@ -32,9 +32,9 @@ const PageContainer = ({
   const navigate = useNavigate();
   
   return (
-    <div className={cn("min-h-screen bg-gradient-to-b from-green-50 to-white pb-16", className)}>
+    <div className={cn("min-h-screen bg-gradient-to-b from-blue-50 to-white pb-16", className)}>
       {(title || showBackButton) && (
-        <div className={cn("sticky top-0 z-10 bg-white/80 backdrop-blur-md shadow-sm", headerClassName)}>
+        <div className={cn("sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm", headerClassName)}>
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
               {showBackButton && (

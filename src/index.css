@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 142.1 100% 39.2%;  /* #00C853 */
+    --primary: 225 100% 58%;  /* #2A5BFF */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -33,7 +33,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 142.1 100% 39.2%;
+    --ring: 225 100% 58%;
 
     --radius: 1rem;
   }
@@ -48,7 +48,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 142.1 100% 39.2%;  /* #00C853 */
+    --primary: 225 100% 58%;  /* #2A5BFF */
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -65,7 +65,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142.1 100% 39.2%;
+    --ring: 225 100% 58%;
   }
 }
 
@@ -82,6 +82,10 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 
+  .blue-gradient {
+    @apply bg-gradient-to-r from-fundeasy-blue to-fundeasy-light-blue text-white;
+  }
+  
   .green-gradient {
     @apply bg-gradient-to-r from-fundeasy-green to-fundeasy-light-green text-white;
   }
@@ -93,7 +97,7 @@
 
 @layer components {
   .app-container {
-    @apply min-h-screen bg-gradient-to-b from-green-50 to-white;
+    @apply min-h-screen bg-gradient-to-b from-blue-50 to-white;
   }
   
   .page-title {
@@ -121,7 +125,15 @@
   }
   
   .fund-card {
-    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-green hover:shadow-md transition-all duration-200;
+    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-blue hover:shadow-md transition-all duration-200;
+  }
+
+  .action-card {
+    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors;
+  }
+  
+  .action-icon {
+    @apply w-8 h-8 rounded-full flex items-center justify-center mb-2;
   }
 }
 
