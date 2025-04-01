@@ -15,12 +15,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockMutualFunds } from '@/utils/mockData';
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const FundDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
   const fund = mockMutualFunds.find(f => f.id === id);
+  
+  const [activeInvestmentType, setActiveInvestmentType] = useState<'sip' | 'onetime'>('sip');
   
   if (!fund) {
     return (
@@ -264,23 +267,89 @@ const FundDetails = () => {
         </Tabs>
       </div>
       
-      {/* Investment Buttons */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex gap-4">
-        <Button 
-          onClick={() => navigate(`/start-sip/${id}`)}
-          className="flex-1 bg-fundeasy-blue hover:bg-fundeasy-dark-blue h-12"
-        >
-          Start SIP
-        </Button>
-        
-        <Button 
-          variant="outline"
-          onClick={() => navigate(`/cart?fund=${id}&type=lumpsum`)}
-          className="flex-1 h-12 border-fundeasy-blue text-fundeasy-blue"
-        >
-          Invest One-time
-        </Button>
-      </div>
+      {/* Investment Actions */}
+      <Card className="mx-4 mt-4 mb-16">
+        <CardContent className="p-0">
+          <ToggleGroup
+            type="single"
+            value={activeInvestmentType}
+            onValueChange={(value) => {
+              if (value) setActiveInvestmentType(value as 'sip' | 'onetime');
+            }}
+            className="w-full border-b"
+          >
+            <ToggleGroupItem
+              value="sip"
+              className="w-1/2 h-12 data-[state=on]:bg-blue-50 data-[state=on]:text-fundeasy-blue"
+            >
+              SIP
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="onetime"
+              className="w-1/2 h-12 data-[state=on]:bg-blue-50 data-[state=on]:text-fundeasy-blue"
+            >
+              One-time
+            </ToggleGroupItem>
+          </ToggleGroup>
+          
+          <div className="p-4 space-y-4">
+            {activeInvestmentType === 'sip' ? (
+              <>
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-gray-600">Min. SIP Amount</span>
+                    <span className="font-medium">₹500</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">SIP Dates</span>
+                    <span className="font-medium">1, 5, 10, 15, 20, 25</span>
+                  </div>
+                </div>
+                
+                <Button
+                  onClick={() => navigate(`/start-sip/${id}`)}
+                  className="w-full bg-fundeasy-blue hover:bg-fundeasy-dark-blue h-12"
+                >
+                  Start SIP
+                </Button>
+              </>
+            ) : (
+              <>
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-gray-600">Min. Investment</span>
+                    <span className="font-medium">₹5,000</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">NAV</span>
+                    <span className="font-medium">₹{fund.navValue.toFixed(2)}</span>
+                  </div>
+                </div>
+                
+                <Button
+                  onClick={() => navigate(`/start-sip/${id}`)}
+                  className="w-full bg-fundeasy-blue hover:bg-fundeasy-dark-blue h-12"
+                >
+                  Invest Now
+                </Button>
+              </>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Redeem Button - Only shown for existing investments */}
+      {fund.id === '1' && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+          <Button
+            onClick={() => navigate(`/redeem/${id}`)}
+            variant="outline"
+            className="w-full border-red-500 text-red-500 hover:bg-red-50"
+          >
+            Redeem Fund
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

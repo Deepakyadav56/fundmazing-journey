@@ -28,6 +28,7 @@ import PaymentGateway from "./pages/PaymentGateway";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import KYCVerification from "./pages/KYCVerification";
 import StartSIP from "./pages/StartSIP";
+import RedeemFund from "./pages/RedeemFund";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/fund/:id" element={<FundDetails />} />
           <Route path="/fund-analysis/:id" element={<FundAnalysis />} />
           <Route path="/start-sip/:id" element={<StartSIP />} />
+          <Route path="/redeem/:id" element={<RedeemFund />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/calculator" element={<Calculator />} />
