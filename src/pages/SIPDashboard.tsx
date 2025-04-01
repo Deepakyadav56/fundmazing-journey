@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Plus, Filter, ArrowUpRight, Pause, PlayCircle, AlertCircle } from 'lucide-react';
+import { Calendar, Plus, Filter, ArrowUpRight, Pause, PlayCircle, AlertCircle, ChevronRight } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,13 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -123,31 +116,43 @@ const SIPDashboard = () => {
           size="sm" 
           variant="outline" 
           onClick={() => navigate('/investment-history')}
-          className="text-xs"
+          className="text-xs bg-fundeasy-accent-bg text-fundeasy-blue border-none"
         >
           History
         </Button>
       }
     >
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        <StatsCard
-          title="Total Investment"
-          value={`₹${totalInvestedAmount.toLocaleString()}`}
-        />
-        <StatsCard
-          title="Current Value"
-          value={`₹${totalCurrentValue.toLocaleString()}`}
-          trend={parseFloat(totalGainPercentage)}
-        />
-      </div>
+      <Card className="mb-6 bg-white shadow-card border-none">
+        <CardContent className="p-4">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-bold">SIP Summary</h2>
+            <div className="text-sm text-fundeasy-blue">Total: ₹{totalInvestedAmount.toLocaleString()}</div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-500">Current Value</p>
+              <p className="text-xl font-semibold">₹{totalCurrentValue.toLocaleString()}</p>
+            </div>
+            
+            <div className="text-right">
+              <p className="text-sm text-gray-500">Returns</p>
+              <div className={`flex items-center justify-end ${parseFloat(totalGainPercentage) >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                <ArrowUpRight size={16} className={`mr-1 ${parseFloat(totalGainPercentage) < 0 ? 'rotate-180' : ''}`} />
+                <p className="text-lg font-semibold">{totalGainPercentage}%</p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Sort Options */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-lg">Your SIPs</h2>
         <div className="flex gap-2">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[120px] text-sm h-8">
+            <SelectTrigger className="w-[120px] text-sm h-9 bg-fundeasy-light-gray border-none">
               <SelectValue placeholder="Sort By" />
             </SelectTrigger>
             <SelectContent>
@@ -158,7 +163,7 @@ const SIPDashboard = () => {
             </SelectContent>
           </Select>
           
-          <Button size="sm" variant="outline" className="h-8">
+          <Button size="sm" variant="outline" className="h-9 bg-fundeasy-light-gray border-none">
             <Filter size={14} className="mr-1" /> Filter
           </Button>
         </div>
@@ -167,11 +172,11 @@ const SIPDashboard = () => {
       {/* SIP List */}
       <div className="space-y-4">
         {sortedSIPs.length === 0 ? (
-          <div className="text-center py-10 bg-gray-50 rounded-lg">
+          <div className="text-center py-10 bg-fundeasy-light-gray rounded-lg">
             <p className="text-gray-500 mb-4">You haven't set up any SIPs yet.</p>
             <Button 
               onClick={() => navigate('/explore')}
-              className="bg-fundeasy-green hover:bg-fundeasy-dark-green"
+              className="bg-fundeasy-blue hover:bg-fundeasy-light-blue shadow-button"
             >
               <Plus size={16} className="mr-1" /> Start a SIP
             </Button>
@@ -184,23 +189,28 @@ const SIPDashboard = () => {
             const daysUntilNext = getDaysUntilNextPayment(sip.nextDate);
             
             return (
-              <Card key={sip.id} className="hover:shadow-md transition-shadow">
+              <Card key={sip.id} className="shadow-card border-none">
                 <CardContent className="p-4">
-                  <div className="flex justify-between mb-1">
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      sip.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {sip.status === 'active' ? 'Active' : 'Paused'}
-                    </span>
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        sip.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        {sip.status === 'active' ? 'Active' : 'Paused'}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {sip.frequency.charAt(0).toUpperCase() + sip.frequency.slice(1)}
+                      </span>
+                    </div>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="h-6 w-6 p-0"
+                      className="h-8 w-8 p-0"
                       onClick={() => handlePauseResume(sip)}
                     >
                       {sip.status === 'active' ? 
                         <Pause size={16} className="text-gray-500" /> : 
-                        <PlayCircle size={16} className="text-fundeasy-green" />
+                        <PlayCircle size={16} className="text-fundeasy-blue" />
                       }
                     </Button>
                   </div>
@@ -225,7 +235,7 @@ const SIPDashboard = () => {
                     
                     <div className="text-right">
                       <p className="text-xs text-gray-500">Returns</p>
-                      <div className={`flex items-center ${gain >= 0 ? 'text-fundeasy-green' : 'text-fundeasy-red'}`}>
+                      <div className={`flex items-center ${gain >= 0 ? 'text-green-600' : 'text-red-500'}`}>
                         <ArrowUpRight size={14} className={`mr-0.5 ${gain < 0 ? 'rotate-180' : ''}`} />
                         <p className="font-medium">{gainPercentage}%</p>
                       </div>
@@ -240,10 +250,10 @@ const SIPDashboard = () => {
                     
                     <Button 
                       variant="link" 
-                      className="text-fundeasy-green p-0 h-auto text-sm"
+                      className="text-fundeasy-blue p-0 h-auto text-sm"
                       onClick={() => navigate(`/fund/${sip.fundId}`)}
                     >
-                      View Fund
+                      View Fund <ChevronRight size={14} className="ml-1" />
                     </Button>
                   </div>
                 </CardContent>
@@ -256,7 +266,7 @@ const SIPDashboard = () => {
       {/* Fixed Add Button */}
       <div className="fixed bottom-20 right-4">
         <Button 
-          className="h-14 w-14 rounded-full shadow-lg bg-fundeasy-green hover:bg-fundeasy-dark-green"
+          className="h-14 w-14 rounded-full shadow-lg bg-fundeasy-blue hover:bg-fundeasy-light-blue shadow-button"
           onClick={() => navigate('/explore')}
         >
           <Plus size={24} />
@@ -265,7 +275,7 @@ const SIPDashboard = () => {
 
       {/* Pause/Resume SIP Dialog */}
       <AlertDialog open={showStatusDialog} onOpenChange={setShowStatusDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="rounded-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle>
               {selectedSIP?.status === 'active' ? 'Pause SIP' : 'Resume SIP'}
@@ -278,8 +288,8 @@ const SIPDashboard = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-fundeasy-green hover:bg-fundeasy-dark-green">
+            <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+            <AlertDialogAction className="bg-fundeasy-blue hover:bg-fundeasy-light-blue rounded-full shadow-button">
               {selectedSIP?.status === 'active' ? 'Yes, Pause SIP' : 'Yes, Resume SIP'}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -287,8 +297,8 @@ const SIPDashboard = () => {
       </AlertDialog>
       
       {/* Disclaimer */}
-      <div className="flex items-center mt-8 mb-16 bg-gray-50 p-3 rounded-md">
-        <AlertCircle size={16} className="text-amber-500 mr-2 flex-shrink-0" />
+      <div className="flex items-center mt-8 mb-16 bg-fundeasy-accent-bg p-3 rounded-md">
+        <AlertCircle size={16} className="text-fundeasy-blue mr-2 flex-shrink-0" />
         <p className="text-xs text-gray-600">
           SIP investments are subject to market risks. Read all scheme related documents carefully before investing.
         </p>

@@ -1,16 +1,16 @@
 
 import React from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from './card';
+import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StatsCardProps {
   title: string;
-  value: string | number;
+  value: string | React.ReactNode;
   subtitle?: string;
   trend?: number;
-  className?: string;
   icon?: React.ReactNode;
+  className?: string;
 }
 
 const StatsCard = ({
@@ -18,37 +18,35 @@ const StatsCard = ({
   value,
   subtitle,
   trend,
-  className,
-  icon
+  icon,
+  className
 }: StatsCardProps) => {
-  const isPositiveTrend = trend !== undefined && trend >= 0;
-  
   return (
-    <Card className={cn("stat-card", className)}>
-      <div className="flex justify-between items-start">
-        <div>
-          <p className="text-sm text-gray-500">{title}</p>
-          <p className="text-xl font-semibold mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
+    <Card className={cn("shadow-card border-none", className)}>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+          {icon && <div className="text-gray-500">{icon}</div>}
         </div>
-        {icon && <div className="text-fundeasy-green">{icon}</div>}
-      </div>
-      
-      {trend !== undefined && (
-        <div className={`flex items-center mt-2 text-sm ${isPositiveTrend ? 'text-fundeasy-green' : 'text-fundeasy-red'}`}>
-          {isPositiveTrend ? (
-            <>
-              <TrendingUp size={16} className="mr-1" />
-              <span>+{trend}%</span>
-            </>
-          ) : (
-            <>
-              <TrendingDown size={16} className="mr-1" />
-              <span>{trend}%</span>
-            </>
+        
+        <div className="flex items-end justify-between">
+          <div>
+            <div className="text-xl font-bold">{value}</div>
+            {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          </div>
+          
+          {trend !== undefined && (
+            <div className={`flex items-center ${trend >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+              {trend >= 0 ? (
+                <ArrowUpRight size={16} className="mr-1" />
+              ) : (
+                <ArrowDownRight size={16} className="mr-1" />
+              )}
+              <span className="text-sm font-medium">{Math.abs(trend)}%</span>
+            </div>
           )}
         </div>
-      )}
+      </CardContent>
     </Card>
   );
 };

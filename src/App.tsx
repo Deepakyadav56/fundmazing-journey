@@ -29,6 +29,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import KYCVerification from "./pages/KYCVerification";
 import StartSIP from "./pages/StartSIP";
 import RedeemFund from "./pages/RedeemFund";
+import "./App.css";
 
 const queryClient = new QueryClient();
 

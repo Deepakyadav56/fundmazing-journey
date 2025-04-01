@@ -3,11 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 50% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -16,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 225 100% 58%;  /* #2A5BFF */
+    --primary: 225 100% 57%;  /* #2563FF */
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -25,7 +25,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 223 94% 97%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -33,7 +33,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 225 100% 58%;
+    --ring: 225 100% 57%;
 
     --radius: 1rem;
   }
@@ -48,7 +48,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 225 100% 58%;  /* #2A5BFF */
+    --primary: 225 100% 57%;  /* #2563FF */
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -65,7 +65,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 225 100% 58%;
+    --ring: 225 100% 57%;
   }
 }
 
@@ -91,13 +91,13 @@
   }
   
   .card-shadow {
-    @apply shadow-md hover:shadow-lg transition-shadow duration-300;
+    @apply shadow-card hover:shadow-card-hover transition-shadow duration-300;
   }
 }
 
 @layer components {
   .app-container {
-    @apply min-h-screen bg-gradient-to-b from-blue-50 to-white;
+    @apply min-h-screen bg-gradient-to-b from-fundeasy-light-gray to-white;
   }
   
   .page-title {
@@ -109,36 +109,40 @@
   }
   
   .stat-card {
-    @apply bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300;
+    @apply bg-white rounded-2xl p-4 shadow-card hover:shadow-card-hover transition-shadow duration-300;
   }
   
   .data-card {
-    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100;
+    @apply bg-white rounded-2xl p-4 shadow-card border border-gray-100;
   }
   
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md rounded-2xl border border-white/70 shadow-sm;
+    @apply bg-white/95 backdrop-blur-md rounded-2xl border border-white/70 shadow-card;
   }
   
   .glass-effect {
-    @apply backdrop-blur-lg bg-white/90 border border-white/30 shadow-md;
+    @apply backdrop-blur-lg bg-white/95 border border-white/30 shadow-card;
   }
   
   .fund-card {
-    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-blue hover:shadow-md transition-all duration-200;
+    @apply bg-white rounded-2xl p-4 shadow-card border border-gray-100 hover:border-fundeasy-blue hover:shadow-card-hover transition-all duration-200;
   }
 
   .action-card {
-    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors;
+    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-fundeasy-light-gray hover:bg-fundeasy-accent-bg transition-colors;
   }
   
   .action-icon {
-    @apply w-8 h-8 rounded-full flex items-center justify-center mb-2;
+    @apply w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-fundeasy-accent-bg text-fundeasy-blue;
+  }
+
+  .feature-icon {
+    @apply w-10 h-10 rounded-full bg-fundeasy-accent-bg flex items-center justify-center text-fundeasy-blue mb-2;
   }
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', 'Inter', sans-serif;
 }
 
 /* Animation classes */
@@ -153,6 +157,15 @@ body {
   
   .animate-bounce-subtle {
     animation: bounce 2s infinite;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
@@ -183,4 +196,24 @@ body {
   50% {
     transform: translateY(-5px);
   }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a8a8a8;
 }
