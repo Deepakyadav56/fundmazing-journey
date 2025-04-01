@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Check, ChevronRight, Info, Calendar, AlertCircle } from 'lucide-react';
+import { Check, ChevronRight, Info, Calendar, AlertCircle, PieChart } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
