@@ -8,7 +8,7 @@ const Welcome = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col min-h-screen justify-between bg-fundeasy-green p-6">
+    <div className="flex flex-col min-h-screen justify-between bg-fundeasy-blue p-6">
       <div className="pt-20">
         <h1 className="text-4xl font-bold text-white mb-2">FundEasy</h1>
         <p className="text-white/80 text-lg">Your mutual fund investment journey begins here</p>
@@ -27,7 +27,7 @@ const Welcome = () => {
               "Curated selection of top funds"
             ].map((feature, index) => (
               <li key={index} className="flex items-center text-white">
-                <span className="mr-2 bg-white text-fundeasy-green rounded-full w-5 h-5 flex items-center justify-center text-xs">✓</span>
+                <span className="mr-2 bg-white text-fundeasy-blue rounded-full w-5 h-5 flex items-center justify-center text-xs">✓</span>
                 {feature}
               </li>
             ))}
@@ -37,7 +37,7 @@ const Welcome = () => {
         <div>
           <Button 
             onClick={() => navigate('/onboarding')} 
-            className="w-full py-6 text-lg hover-scale bg-white text-fundeasy-green"
+            className="w-full py-6 text-lg hover-scale bg-white text-fundeasy-blue"
           >
             Get Started
             <ArrowRight className="ml-2" size={20} />
