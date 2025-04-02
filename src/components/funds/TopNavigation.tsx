@@ -21,21 +21,23 @@ const TopNavigation: React.FC = () => {
   ];
 
   return (
-    <div className="flex overflow-x-auto scrollbar-none py-2 border-b">
-      {navigationItems.map((item) => (
-        <button
-          key={item.name}
-          onClick={() => navigate(item.path)}
-          className={cn(
-            'px-4 py-1 whitespace-nowrap transition-colors text-sm font-medium',
-            currentPath === item.path
-              ? 'text-fundeasy-blue border-b-2 border-fundeasy-blue'
-              : 'text-gray-600'
-          )}
-        >
-          {item.name}
-        </button>
-      ))}
+    <div className="flex overflow-x-auto scrollbar-none border-b">
+      <div className="flex w-full">
+        {navigationItems.map((item) => (
+          <button
+            key={item.name}
+            onClick={() => navigate(item.path)}
+            className={cn(
+              'px-4 py-2 whitespace-nowrap transition-colors text-sm font-medium flex-1',
+              currentPath === item.path
+                ? 'text-fundeasy-blue border-b-2 border-fundeasy-blue'
+                : 'text-gray-600'
+            )}
+          >
+            {item.name}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

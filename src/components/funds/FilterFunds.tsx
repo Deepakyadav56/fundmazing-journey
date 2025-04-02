@@ -1,14 +1,19 @@
 
 import React, { useState } from 'react';
-import { X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Filter, ChevronDown, ChevronUp, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
-import { Slider } from '@/components/ui/slider';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 interface FilterFundsProps {
   isOpen: boolean;
@@ -17,341 +22,362 @@ interface FilterFundsProps {
 }
 
 interface FilterState {
-  riskLevel: string[];
-  category: string[];
-  amcList: string[];
-  returnPeriod: string;
-  expenseRatio: [number, number];
-  fundSize: string;
-  fundType: string;
-  rating: number;
   sortBy: string;
+  categories: string[];
+  riskLevels: string[];
+  rating: string;
+  fundHouses: string[];
+  indexOnly: boolean;
+  directPlan: boolean;
 }
 
 const FilterFunds: React.FC<FilterFundsProps> = ({ isOpen, onClose, onApply }) => {
   const [filters, setFilters] = useState<FilterState>({
-    riskLevel: [],
-    category: [],
-    amcList: [],
-    returnPeriod: '1y',
-    expenseRatio: [0, 2.5],
-    fundSize: 'all',
-    fundType: 'direct',
-    rating: 0,
-    sortBy: 'returns'
+    sortBy: 'returns',
+    categories: [],
+    riskLevels: [],
+    rating: '',
+    fundHouses: [],
+    indexOnly: false,
+    directPlan: true,
   });
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedSection, setExpandedSection] = useState<string | null>("sortBy");
+  
+  // Mock data for total funds count
+  const totalFunds = 1482;
 
-  const handleRiskLevelChange = (risk: string) => {
-    setFilters(prev => {
-      const newRiskLevel = prev.riskLevel.includes(risk)
-        ? prev.riskLevel.filter(item => item !== risk)
-        : [...prev.riskLevel, risk];
-      return { ...prev, riskLevel: newRiskLevel };
-    });
+  // Fund Houses
+  const fundHouses = [
+    '360 ONE Mutual Fund',
+    'Aditya Birla Sun Life Mutual Fund',
+    'Axis Mutual Fund',
+    'Bajaj Finserv Mutual Fund',
+    'Bandhan Mutual Fund',
+    'Bank of India Mutual Fund',
+    'Baroda BNP Paribas Mutual Fund',
+    'Baroda Mutual Fund',
+    'Canara Robeco Mutual Fund',
+    'DSP Mutual Fund',
+    'Edelweiss Mutual Fund',
+    'Franklin Templeton Mutual Fund',
+    'Groww Mutual Fund',
+    'HDFC Mutual Fund',
+    'HSBC Mutual Fund',
+    'ICICI Prudential Mutual Fund',
+    'IDFC Mutual Fund',
+    'Invesco Mutual Fund',
+    'ITI Mutual Fund',
+    'JM Financial Mutual Fund',
+    'Kotak Mahindra Mutual Fund',
+    'LIC Mutual Fund',
+    'Mahindra Manulife Mutual Fund',
+    'Mirae Asset Mutual Fund',
+    'Motilal Oswal Mutual Fund',
+    'Navi Mutual Fund',
+    'Nippon India Mutual Fund',
+    'PGIM India Mutual Fund',
+    'PPFAS Mutual Fund',
+    'Quant Mutual Fund',
+    'Quantum Mutual Fund',
+    'SBI Mutual Fund',
+    'Sundaram Mutual Fund',
+    'Tata Mutual Fund',
+    'Taurus Mutual Fund',
+    'Trust Mutual Fund',
+    'Union Mutual Fund',
+    'UTI Mutual Fund',
+    'WhiteOak Capital Mutual Fund'
+  ];
+
+  const filteredFundHouses = searchTerm 
+    ? fundHouses.filter(house => house.toLowerCase().includes(searchTerm.toLowerCase()))
+    : fundHouses;
+
+  // Toggle category selection
+  const toggleCategory = (category: string) => {
+    setFilters(prev => ({
+      ...prev,
+      categories: prev.categories.includes(category)
+        ? prev.categories.filter(c => c !== category)
+        : [...prev.categories, category]
+    }));
+  };
+  
+  // Toggle risk level selection
+  const toggleRiskLevel = (risk: string) => {
+    setFilters(prev => ({
+      ...prev,
+      riskLevels: prev.riskLevels.includes(risk)
+        ? prev.riskLevels.filter(r => r !== risk)
+        : [...prev.riskLevels, risk]
+    }));
+  };
+  
+  // Toggle fund house selection
+  const toggleFundHouse = (house: string) => {
+    setFilters(prev => ({
+      ...prev,
+      fundHouses: prev.fundHouses.includes(house)
+        ? prev.fundHouses.filter(h => h !== house)
+        : [...prev.fundHouses, house]
+    }));
   };
 
-  const handleCategoryChange = (category: string) => {
-    setFilters(prev => {
-      const newCategory = prev.category.includes(category)
-        ? prev.category.filter(item => item !== category)
-        : [...prev.category, category];
-      return { ...prev, category: newCategory };
+  // Reset all filters
+  const handleResetFilters = () => {
+    setFilters({
+      sortBy: 'returns',
+      categories: [],
+      riskLevels: [],
+      rating: '',
+      fundHouses: [],
+      indexOnly: false,
+      directPlan: true,
     });
+    setSearchTerm('');
   };
 
-  const handleAmcChange = (amc: string) => {
-    setFilters(prev => {
-      const newAmcList = prev.amcList.includes(amc)
-        ? prev.amcList.filter(item => item !== amc)
-        : [...prev.amcList, amc];
-      return { ...prev, amcList: newAmcList };
-    });
-  };
-
+  // Apply filters and close modal
   const handleApplyFilters = () => {
     onApply(filters);
     onClose();
   };
 
-  const handleResetFilters = () => {
-    setFilters({
-      riskLevel: [],
-      category: [],
-      amcList: [],
-      returnPeriod: '1y',
-      expenseRatio: [0, 2.5],
-      fundSize: 'all',
-      fundType: 'direct',
-      rating: 0,
-      sortBy: 'returns'
-    });
-  };
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-      <div className="bg-white rounded-t-xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 z-10 bg-white flex items-center justify-between p-4 border-b">
+    <div className="fixed inset-0 bg-black/70 z-50 flex">
+      <div className="bg-white w-full md:w-96 h-full overflow-y-auto">
+        <div className="p-4 flex items-center justify-between border-b">
           <div className="flex items-center">
             <Filter size={18} className="mr-2" />
             <h2 className="text-lg font-medium">Filters</h2>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X size={20} />
-          </Button>
+          <div className="flex items-center">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="mr-2 text-sm font-medium"
+              onClick={handleResetFilters}
+            >
+              Clear all
+            </Button>
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X size={18} />
+            </Button>
+          </div>
         </div>
 
-        <div className="p-4 space-y-6 pb-20">
-          {/* Sort By */}
-          <div>
-            <Label className="text-base font-medium">Sort By</Label>
-            <RadioGroup 
-              value={filters.sortBy} 
-              onValueChange={value => setFilters(prev => ({ ...prev, sortBy: value }))}
-              className="grid grid-cols-2 gap-3 mt-3"
-            >
-              {[
-                { value: 'returns', label: 'Returns' },
-                { value: 'rating', label: 'Rating' },
-                { value: 'expenseRatio', label: 'Expense Ratio' },
-                { value: 'fundSize', label: 'Fund Size' }
-              ].map(option => (
-                <div 
-                  key={option.value}
-                  className={`border rounded-lg p-3 flex items-center cursor-pointer hover:bg-gray-50 ${
-                    filters.sortBy === option.value ? 'border-fundeasy-blue bg-blue-50' : ''
-                  }`}
+        <div className="divide-y">
+          {/* Sort By Section */}
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="w-full"
+            value={expandedSection === "sortBy" ? "sortBy" : undefined}
+            onValueChange={(value) => setExpandedSection(value || null)}
+          >
+            <AccordionItem value="sortBy" className="border-none">
+              <AccordionTrigger className="py-4 px-4 hover:no-underline">
+                <span className="text-base font-medium">Sort By</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <RadioGroup 
+                  value={filters.sortBy} 
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, sortBy: value }))}
                 >
-                  <RadioGroupItem value={option.value} id={option.value} />
-                  <Label htmlFor={option.value} className="cursor-pointer ml-2">
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
+                  {[
+                    { value: 'returns', label: '1Y Returns' },
+                    { value: 'returns3y', label: '3Y Returns' },
+                    { value: 'returns5y', label: '5Y Returns' },
+                    { value: 'aum', label: 'AUM Size' },
+                    { value: 'expense', label: 'Expense Ratio (Low to High)' },
+                  ].map((option) => (
+                    <div key={option.value} className="flex items-center space-x-2 py-2">
+                      <RadioGroupItem value={option.value} id={`sort-${option.value}`} />
+                      <Label htmlFor={`sort-${option.value}`}>{option.label}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-          <Separator />
-
-          {/* Risk Level */}
-          <div>
-            <Label className="text-base font-medium">Risk Level</Label>
-            <div className="mt-2 space-y-2">
-              {['Low', 'Moderate', 'High'].map(risk => (
-                <div key={risk} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`risk-${risk}`}
-                    checked={filters.riskLevel.includes(risk)}
-                    onCheckedChange={() => handleRiskLevelChange(risk)}
+          {/* Category Section */}
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="w-full"
+            value={expandedSection === "category" ? "category" : undefined}
+            onValueChange={(value) => setExpandedSection(value || null)}
+          >
+            <AccordionItem value="category" className="border-none">
+              <AccordionTrigger className="py-4 px-4 hover:no-underline">
+                <span className="text-base font-medium">Category</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="mb-4 flex items-center justify-between">
+                  <Label className="text-sm">Index Funds Only</Label>
+                  <Switch 
+                    checked={filters.indexOnly}
+                    onCheckedChange={(checked) => setFilters(prev => ({ ...prev, indexOnly: checked }))}
                   />
-                  <Label htmlFor={`risk-${risk}`} className="cursor-pointer">
-                    {risk}
-                  </Label>
                 </div>
-              ))}
-            </div>
-          </div>
+                <Separator className="my-2" />
+                
+                {['Equity', 'Debt', 'Hybrid', 'Commodities'].map((category) => (
+                  <div key={category} className="flex items-center space-x-2 py-2">
+                    <Checkbox 
+                      id={`category-${category}`}
+                      checked={filters.categories.includes(category)}
+                      onCheckedChange={() => toggleCategory(category)}
+                    />
+                    <Label htmlFor={`category-${category}`}>{category}</Label>
+                  </div>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-          <Separator />
+          {/* Risk Section */}
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="w-full"
+            value={expandedSection === "risk" ? "risk" : undefined}
+            onValueChange={(value) => setExpandedSection(value || null)}
+          >
+            <AccordionItem value="risk" className="border-none">
+              <AccordionTrigger className="py-4 px-4 hover:no-underline">
+                <span className="text-base font-medium">Risk</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                {[
+                  'Low', 
+                  'Moderately Low', 
+                  'Moderate', 
+                  'Moderately High', 
+                  'High', 
+                  'Very High'
+                ].map((risk) => (
+                  <div key={risk} className="flex items-center space-x-2 py-2">
+                    <Checkbox 
+                      id={`risk-${risk}`}
+                      checked={filters.riskLevels.includes(risk)}
+                      onCheckedChange={() => toggleRiskLevel(risk)}
+                    />
+                    <Label htmlFor={`risk-${risk}`}>{risk}</Label>
+                  </div>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-          {/* Fund Categories */}
-          <Collapsible className="w-full">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-medium">Fund Category</Label>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
-                  <ChevronDown size={18} />
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-            
-            <CollapsibleContent className="mt-2 space-y-2">
-              {[
-                'Equity: Large Cap', 'Equity: Mid Cap', 'Equity: Small Cap',
-                'Equity: Multi Cap', 'Equity: ELSS', 'Hybrid: Aggressive',
-                'Hybrid: Conservative', 'Debt: Short Term', 'Debt: Corporate Bond',
-                'Index Funds', 'Sectoral / Thematic'
-              ].map(category => (
-                <div key={category} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`category-${category}`}
-                    checked={filters.category.includes(category)}
-                    onCheckedChange={() => handleCategoryChange(category)}
-                  />
-                  <Label htmlFor={`category-${category}`} className="cursor-pointer">
-                    {category}
-                  </Label>
-                </div>
-              ))}
-            </CollapsibleContent>
-          </Collapsible>
-
-          <Separator />
-
-          {/* AMCs */}
-          <Collapsible className="w-full">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-medium">Fund House (AMC)</Label>
-              <CollapsibleTrigger asChild>
-                <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
-                  <ChevronDown size={18} />
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-            
-            <CollapsibleContent className="mt-2 space-y-2">
-              {[
-                'SBI Mutual Fund', 'HDFC Mutual Fund', 'ICICI Prudential Mutual Fund',
-                'Nippon India Mutual Fund', 'Axis Mutual Fund', 'Aditya Birla Sun Life Mutual Fund',
-                'UTI Mutual Fund', 'DSP Mutual Fund', 'Kotak Mahindra Mutual Fund'
-              ].map(amc => (
-                <div key={amc} className="flex items-center space-x-2">
-                  <Checkbox 
-                    id={`amc-${amc}`}
-                    checked={filters.amcList.includes(amc)}
-                    onCheckedChange={() => handleAmcChange(amc)}
-                  />
-                  <Label htmlFor={`amc-${amc}`} className="cursor-pointer">
-                    {amc}
-                  </Label>
-                </div>
-              ))}
-            </CollapsibleContent>
-          </Collapsible>
-
-          <Separator />
-
-          {/* Return Period */}
-          <div>
-            <Label className="text-base font-medium">Return Period</Label>
-            <RadioGroup 
-              value={filters.returnPeriod} 
-              onValueChange={value => setFilters(prev => ({ ...prev, returnPeriod: value }))}
-              className="grid grid-cols-4 gap-3 mt-3"
-            >
-              {[
-                { value: '1m', label: '1M' },
-                { value: '6m', label: '6M' },
-                { value: '1y', label: '1Y' },
-                { value: '3y', label: '3Y' },
-                { value: '5y', label: '5Y' }
-              ].map(period => (
-                <div 
-                  key={period.value}
-                  className={`border rounded-lg p-2 flex justify-center items-center cursor-pointer hover:bg-gray-50 ${
-                    filters.returnPeriod === period.value ? 'border-fundeasy-blue bg-blue-50 text-fundeasy-blue' : ''
-                  }`}
+          {/* Ratings Section */}
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="w-full"
+            value={expandedSection === "rating" ? "rating" : undefined}
+            onValueChange={(value) => setExpandedSection(value || null)}
+          >
+            <AccordionItem value="rating" className="border-none">
+              <AccordionTrigger className="py-4 px-4 hover:no-underline">
+                <span className="text-base font-medium">Ratings</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <RadioGroup 
+                  value={filters.rating} 
+                  onValueChange={(value) => setFilters(prev => ({ ...prev, rating: value }))}
                 >
-                  <Label htmlFor={period.value} className="cursor-pointer text-sm">
-                    {period.label}
-                  </Label>
-                  <RadioGroupItem value={period.value} id={period.value} className="hidden" />
+                  {[5, 4, 3, 2, 1].map((stars) => (
+                    <div key={stars} className="flex items-center space-x-2 py-2">
+                      <RadioGroupItem value={stars.toString()} id={`rating-${stars}`} />
+                      <Label htmlFor={`rating-${stars}`}>
+                        {stars} {stars === 1 ? 'Star' : 'Stars'}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Fund House Section */}
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="w-full"
+            value={expandedSection === "fundHouse" ? "fundHouse" : undefined}
+            onValueChange={(value) => setExpandedSection(value || null)}
+          >
+            <AccordionItem value="fundHouse" className="border-none">
+              <AccordionTrigger className="py-4 px-4 hover:no-underline">
+                <span className="text-base font-medium">Fund House</span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="relative mb-4">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                  <Input
+                    placeholder="Search fund house"
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
-              ))}
-            </RadioGroup>
-          </div>
+                
+                <div className="max-h-60 overflow-y-auto">
+                  {filteredFundHouses.map((house) => (
+                    <div key={house} className="flex items-center space-x-2 py-2">
+                      <Checkbox 
+                        id={`house-${house}`}
+                        checked={filters.fundHouses.includes(house)}
+                        onCheckedChange={() => toggleFundHouse(house)}
+                      />
+                      <Label htmlFor={`house-${house}`} className="text-sm">{house}</Label>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
-          <Separator />
-
-          {/* Expense Ratio */}
-          <div>
-            <div className="flex justify-between">
-              <Label className="text-base font-medium">Expense Ratio</Label>
-              <span className="text-sm">
-                {filters.expenseRatio[0]}% - {filters.expenseRatio[1]}%
-              </span>
-            </div>
-            <div className="py-6 px-2">
-              <Slider 
-                value={filters.expenseRatio}
-                min={0}
-                max={2.5}
-                step={0.1}
-                onValueChange={(value) => setFilters(prev => ({ ...prev, expenseRatio: value as [number, number] }))}
+          {/* Direct/Regular Plan Toggle */}
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-medium">Plan Type</h3>
+                <p className="text-xs text-gray-500">Direct plans have lower expense ratio</p>
+              </div>
+              <Switch 
+                checked={filters.directPlan}
+                onCheckedChange={(checked) => setFilters(prev => ({ ...prev, directPlan: checked }))}
               />
             </div>
-          </div>
-
-          <Separator />
-
-          {/* Fund Size */}
-          <div>
-            <Label className="text-base font-medium">Fund Size (AUM)</Label>
-            <RadioGroup 
-              value={filters.fundSize} 
-              onValueChange={value => setFilters(prev => ({ ...prev, fundSize: value }))}
-              className="space-y-2 mt-2"
-            >
-              {[
-                { value: 'all', label: 'All Sizes' },
-                { value: 'small', label: 'Less than ₹500 Cr' },
-                { value: 'medium', label: '₹500 Cr - ₹5000 Cr' },
-                { value: 'large', label: 'Above ₹5000 Cr' }
-              ].map(size => (
-                <div key={size.value} className="flex items-center space-x-2">
-                  <RadioGroupItem value={size.value} id={`size-${size.value}`} />
-                  <Label htmlFor={`size-${size.value}`} className="cursor-pointer">
-                    {size.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
-          <Separator />
-
-          {/* Fund Type */}
-          <div>
-            <Label className="text-base font-medium">Fund Type</Label>
-            <RadioGroup 
-              value={filters.fundType} 
-              onValueChange={value => setFilters(prev => ({ ...prev, fundType: value }))}
-              className="grid grid-cols-2 gap-3 mt-3"
-            >
-              <div 
-                className={`border rounded-lg p-3 flex items-center cursor-pointer hover:bg-gray-50 ${
-                  filters.fundType === 'direct' ? 'border-fundeasy-blue bg-blue-50' : ''
-                }`}
-              >
-                <RadioGroupItem value="direct" id="direct" />
-                <div className="ml-2">
-                  <Label htmlFor="direct" className="cursor-pointer font-medium">Direct</Label>
-                  <p className="text-xs text-gray-500">Lower expense ratio</p>
-                </div>
-              </div>
-              <div 
-                className={`border rounded-lg p-3 flex items-center cursor-pointer hover:bg-gray-50 ${
-                  filters.fundType === 'regular' ? 'border-fundeasy-blue bg-blue-50' : ''
-                }`}
-              >
-                <RadioGroupItem value="regular" id="regular" />
-                <div className="ml-2">
-                  <Label htmlFor="regular" className="cursor-pointer font-medium">Regular</Label>
-                  <p className="text-xs text-gray-500">Higher expense ratio</p>
-                </div>
-              </div>
-            </RadioGroup>
+            <p className="text-xs mt-1">
+              {filters.directPlan ? 'Direct Plan' : 'Regular Plan'}
+            </p>
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex gap-4">
+        {/* Apply Filters Button */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
           <Button 
-            variant="outline" 
-            className="flex-1 border-gray-300"
-            onClick={handleResetFilters}
-          >
-            Reset All
-          </Button>
-          
-          <Button 
+            className="w-full bg-fundeasy-blue hover:bg-fundeasy-dark-blue"
             onClick={handleApplyFilters}
-            className="flex-1 bg-fundeasy-blue hover:bg-fundeasy-dark-blue"
           >
-            Apply Filters
+            View {totalFunds} funds
           </Button>
         </div>
       </div>
+      
+      {/* Overlay to close when clicked outside on larger screens */}
+      <div 
+        className="hidden md:block flex-1 h-full" 
+        onClick={onClose}
+      />
     </div>
   );
 };
