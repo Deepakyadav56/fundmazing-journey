@@ -1,878 +1,411 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PageContainer from '@/components/layout/PageContainer';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/hooks/use-toast';
-import {
-  FileText,
-  User,
-  ShieldCheck,
-  Banknote,
-  Link,
-  Calendar,
-  Camera,
-  ArrowRight,
-  ArrowLeft,
-  Check,
-  AlertTriangle,
-  Info
-} from 'lucide-react';
 import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+  CheckCircle2, Circle, ArrowRight, 
+  Upload, Camera, FileText, AlertTriangle 
+} from 'lucide-react';
+import PageContainer from '@/components/layout/PageContainer';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+
+enum KYCStep {
+  PERSONAL_INFO = 'PERSONAL_INFO',
+  PAN_VERIFICATION = 'PAN_VERIFICATION',
+  ADDRESS_PROOF = 'ADDRESS_PROOF',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
+  REVIEW = 'REVIEW',
+}
 
 const KYCVerification = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [step, setStep] = useState(1);
-  const [totalSteps] = useState(8);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showInfoDialog, setShowInfoDialog] = useState(false);
-
-  // Form state
-  const [panCard, setPanCard] = useState('');
-  const [aadhaar, setAadhaar] = useState('');
-  const [aadhaarOtp, setAadhaarOtp] = useState('');
-  const [fullName, setFullName] = useState('John Doe'); // Pre-filled from account
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState('');
-  const [address, setAddress] = useState('');
-  const [addressProof, setAddressProof] = useState('aadhaar');
-  const [bankAccountNumber, setBankAccountNumber] = useState('');
-  const [ifscCode, setIfscCode] = useState('');
-  const [bankName, setBankName] = useState('');
-  const [taxResidency, setTaxResidency] = useState('india');
-  const [isPEP, setIsPEP] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
-
-  // Handle OTP verification for Aadhaar
-  const verifyAadhaarOtp = () => {
-    if (aadhaarOtp.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter a valid 6-digit OTP",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    // Simulate OTP verification
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "OTP Verified",
-        description: "Your Aadhaar has been verified successfully",
-      });
-      // Auto-fill data from Aadhaar
-      setFullName("John Doe");
-      setDateOfBirth("1990-01-01");
-      setGender("male");
-      setAddress("123 Main Street, Bangalore, Karnataka, 560001");
-      return true;
-    }, 1500);
-    
-    return true;
+  const [currentStep, setCurrentStep] = useState<KYCStep>(KYCStep.PERSONAL_INFO);
+  const [formData, setFormData] = useState({
+    name: '',
+    dob: '',
+    mobile: '',
+    email: '',
+    panNumber: '',
+    address: '',
+    pincode: '',
+    city: '',
+    state: '',
+    bankAccount: '',
+    ifsc: '',
+    bankName: '',
+  });
+  
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
-
-  // PAN verification helper
-  const verifyPan = () => {
-    const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-    if (!panRegex.test(panCard)) {
-      toast({
-        title: "Invalid PAN",
-        description: "Please enter a valid PAN card number",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    // Simulate PAN verification
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "PAN Verified",
-        description: "Your PAN card has been verified successfully",
-      });
-      return true;
-    }, 1500);
-    
-    return true;
-  };
-
-  // Bank account verification
-  const verifyBankAccount = () => {
-    if (!bankAccountNumber || !ifscCode) {
-      toast({
-        title: "Missing Information",
-        description: "Please enter both bank account number and IFSC code",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
-    // Simulate IFSC verification
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setBankName("State Bank of India - Koramangala Branch");
-      toast({
-        title: "Bank Account Verified",
-        description: "Bank details have been verified via penny drop",
-      });
-      return true;
-    }, 1500);
-    
-    return true;
-  };
-
-  // Handle next step
-  const handleNext = () => {
-    let canProceed = true;
-    
-    // Validation based on current step
-    if (step === 1) {
-      // PAN verification step
-      canProceed = verifyPan();
-    } else if (step === 2) {
-      // Aadhaar OTP verification step
-      canProceed = verifyAadhaarOtp();
-    } else if (step === 4) {
-      // Bank Account verification step
-      canProceed = verifyBankAccount();
-    } else if (step === 5) {
-      // FATCA declaration
-      if (!termsAccepted) {
-        toast({
-          title: "Terms Required",
-          description: "Please accept the FATCA declaration",
-          variant: "destructive",
-        });
-        canProceed = false;
-      }
-    } 
-    
-    if (canProceed) {
-      if (step < totalSteps) {
-        setStep(step + 1);
-      } else {
-        // KYC completed
-        toast({
-          title: "KYC Completed!",
-          description: "Your KYC verification has been submitted successfully.",
-        });
-        // Navigate back to profile page
-        navigate('/profile');
-      }
-    }
-  };
-
-  const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    } else {
-      navigate(-1);
+  
+  const handleNextStep = () => {
+    switch (currentStep) {
+      case KYCStep.PERSONAL_INFO:
+        setCurrentStep(KYCStep.PAN_VERIFICATION);
+        break;
+      case KYCStep.PAN_VERIFICATION:
+        setCurrentStep(KYCStep.ADDRESS_PROOF);
+        break;
+      case KYCStep.ADDRESS_PROOF:
+        setCurrentStep(KYCStep.BANK_ACCOUNT);
+        break;
+      case KYCStep.BANK_ACCOUNT:
+        setCurrentStep(KYCStep.REVIEW);
+        break;
+      case KYCStep.REVIEW:
+        handleSubmit();
+        break;
     }
   };
   
-  // Helper function to mask Aadhaar number
-  const maskAadhaar = (aadhaarNumber) => {
-    if (aadhaarNumber.length !== 12) return aadhaarNumber;
-    return `XXXX-XXXX-${aadhaarNumber.slice(8)}`;
+  const handleSubmit = () => {
+    toast({
+      title: "KYC Submitted Successfully",
+      description: "Your KYC has been submitted for verification."
+    });
+    navigate('/profile');
   };
-
+  
+  const isStepComplete = (step: KYCStep) => {
+    switch (step) {
+      case KYCStep.PERSONAL_INFO:
+        return formData.name && formData.dob && formData.mobile && formData.email;
+      case KYCStep.PAN_VERIFICATION:
+        return formData.panNumber && formData.panNumber.length === 10;
+      case KYCStep.ADDRESS_PROOF:
+        return formData.address && formData.pincode && formData.city && formData.state;
+      case KYCStep.BANK_ACCOUNT:
+        return formData.bankAccount && formData.ifsc && formData.bankName;
+      case KYCStep.REVIEW:
+        return true;
+    }
+  };
+  
   return (
-    <PageContainer 
-      title="KYC Verification" 
-      showBackButton
-    >
-      <div className="pb-20">
-        {/* Progress Bar */}
-        <div className="mb-6">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>Step {step} of {totalSteps}</span>
-            <span>{Math.round((step / totalSteps) * 100)}% Completed</span>
-          </div>
-          <Progress value={(step / totalSteps) * 100} className="h-2" />
+    <PageContainer title="KYC Verification" showBackButton>
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-6">
+          <StepIndicator 
+            number={1} 
+            title="Personal Info" 
+            isActive={currentStep === KYCStep.PERSONAL_INFO} 
+            isCompleted={currentStep !== KYCStep.PERSONAL_INFO}
+          />
+          <div className="h-0.5 flex-grow bg-gray-200 mx-1"></div>
+          <StepIndicator 
+            number={2} 
+            title="PAN" 
+            isActive={currentStep === KYCStep.PAN_VERIFICATION} 
+            isCompleted={currentStep !== KYCStep.PERSONAL_INFO && currentStep !== KYCStep.PAN_VERIFICATION}
+          />
+          <div className="h-0.5 flex-grow bg-gray-200 mx-1"></div>
+          <StepIndicator 
+            number={3} 
+            title="Address" 
+            isActive={currentStep === KYCStep.ADDRESS_PROOF} 
+            isCompleted={currentStep !== KYCStep.PERSONAL_INFO && currentStep !== KYCStep.PAN_VERIFICATION && currentStep !== KYCStep.ADDRESS_PROOF}
+          />
+          <div className="h-0.5 flex-grow bg-gray-200 mx-1"></div>
+          <StepIndicator 
+            number={4} 
+            title="Bank" 
+            isActive={currentStep === KYCStep.BANK_ACCOUNT} 
+            isCompleted={currentStep === KYCStep.REVIEW}
+          />
         </div>
         
-        {/* Step Indicator */}
-        <div className="mb-6">
-          <div className="bg-white rounded-xl p-4 shadow flex items-center">
-            {step === 1 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <FileText size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">PAN Verification</h2>
-                  <p className="text-sm text-gray-500">Verify your PAN details</p>
-                </div>
-              </>
-            )}
-            
-            {step === 2 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <User size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Aadhaar Verification</h2>
-                  <p className="text-sm text-gray-500">Verify via OTP on registered mobile</p>
-                </div>
-              </>
-            )}
-            
-            {step === 3 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <ShieldCheck size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Address Verification</h2>
-                  <p className="text-sm text-gray-500">Confirm your residential address</p>
-                </div>
-              </>
-            )}
-            
-            {step === 4 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <Banknote size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Bank Account</h2>
-                  <p className="text-sm text-gray-500">Link your bank account</p>
-                </div>
-              </>
-            )}
-            
-            {step === 5 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <FileText size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">FATCA Declaration</h2>
-                  <p className="text-sm text-gray-500">Tax residency information</p>
-                </div>
-              </>
-            )}
-            
-            {step === 6 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <Camera size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Video KYC</h2>
-                  <p className="text-sm text-gray-500">Complete verification via video call</p>
-                </div>
-              </>
-            )}
-            
-            {step === 7 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <Link size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">Digital Signature</h2>
-                  <p className="text-sm text-gray-500">Sign documents electronically</p>
-                </div>
-              </>
-            )}
-            
-            {step === 8 && (
-              <>
-                <div className="h-10 w-10 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue flex items-center justify-center mr-3">
-                  <Check size={20} />
-                </div>
-                <div>
-                  <h2 className="font-semibold">KYC Status</h2>
-                  <p className="text-sm text-gray-500">Verification status</p>
-                </div>
-              </>
-            )}
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="ml-auto"
-              onClick={() => setShowInfoDialog(true)}
-            >
-              <Info size={18} />
-            </Button>
-          </div>
-        </div>
+        {currentStep === KYCStep.PERSONAL_INFO && (
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">Full Name (as per PAN)</label>
+                <Input 
+                  id="name" 
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="dob" className="text-sm font-medium">Date of Birth</label>
+                <Input 
+                  id="dob" 
+                  type="date"
+                  value={formData.dob}
+                  onChange={(e) => handleInputChange('dob', e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="mobile" className="text-sm font-medium">Mobile Number</label>
+                <Input 
+                  id="mobile" 
+                  type="tel"
+                  value={formData.mobile}
+                  onChange={(e) => handleInputChange('mobile', e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">Email Address</label>
+                <Input 
+                  id="email" 
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
         
-        {/* Step Content */}
-        <div className="bg-white rounded-xl p-5 shadow mb-6">
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <Label htmlFor="pan_card">PAN Card Number</Label>
-                <div className="mt-1">
-                  <Input
-                    id="pan_card"
-                    type="text"
-                    placeholder="Enter PAN (e.g., ABCDE1234F)"
-                    value={panCard}
-                    onChange={(e) => setPanCard(e.target.value.toUpperCase())}
-                    className="uppercase"
-                    maxLength={10}
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">Your PAN will be used for tax reporting and KYC verification.</p>
+        {currentStep === KYCStep.PAN_VERIFICATION && (
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="pan" className="text-sm font-medium">PAN Number</label>
+                <Input 
+                  id="pan"
+                  placeholder="ABCDE1234F" 
+                  value={formData.panNumber}
+                  onChange={(e) => handleInputChange('panNumber', e.target.value.toUpperCase())}
+                  maxLength={10}
+                />
+                <p className="text-xs text-gray-500">Enter your 10-digit PAN number</p>
               </div>
               
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-md flex items-start">
-                <AlertTriangle className="text-amber-500 mr-2 mt-0.5 h-4 w-4 flex-shrink-0" />
-                <p className="text-xs text-amber-800">
-                  Please ensure that your PAN card number is entered correctly. Incorrect PAN details may lead to rejection of your KYC application.
-                </p>
-              </div>
-            </div>
-          )}
-          
-          {step === 2 && (
-            <div className="space-y-6">
-              <div>
-                <Label htmlFor="aadhaar">Aadhaar Number</Label>
-                <div className="mt-1">
-                  <Input
-                    id="aadhaar"
-                    type="text"
-                    placeholder="Enter 12-digit Aadhaar number"
-                    value={aadhaar}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      if (value.length <= 12) setAadhaar(value);
-                    }}
-                    inputMode="numeric"
-                    maxLength={12}
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Your Aadhaar number will be displayed as {aadhaar.length === 12 ? maskAadhaar(aadhaar) : 'XXXX-XXXX-XXXX'} for security.
-                </p>
-              </div>
-              
-              {aadhaar.length === 12 && (
-                <div className="space-y-4">
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <p className="text-sm text-blue-800">
-                      OTP has been sent to your Aadhaar-linked mobile number
-                    </p>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Upload PAN Card</label>
+                <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center">
+                  <div className="flex justify-center mb-2">
+                    <Upload className="text-gray-400" />
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="aadhaar_otp">Enter OTP</Label>
-                    <div className="mt-2 flex justify-center">
-                      <InputOTP
-                        maxLength={6}
-                        value={aadhaarOtp}
-                        onChange={setAadhaarOtp}
-                        render={({ slots }) => (
-                          <InputOTPGroup>
-                            {slots.map((slot, index) => (
-                              <InputOTPSlot key={index} {...slot} />
-                            ))}
-                          </InputOTPGroup>
-                        )}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          
-          {step === 3 && (
-            <div className="space-y-6">
-              <div>
-                <Label htmlFor="fullName">Full Name (as per Aadhaar)</Label>
-                <div className="mt-1">
-                  <Input
-                    id="fullName"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    readOnly
-                    className="bg-gray-50"
-                  />
+                  <p className="text-sm text-gray-500 mb-2">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-400">JPG, PNG or PDF (Max 5MB)</p>
+                  <input type="file" className="hidden" id="pan-upload" />
+                  <Button 
+                    variant="outline" 
+                    className="mt-3 text-sm"
+                    onClick={() => document.getElementById('pan-upload')?.click()}
+                  >
+                    <Camera size={14} className="mr-1" /> Upload
+                  </Button>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                  <div className="mt-1">
-                    <Input
-                      id="dateOfBirth"
-                      type="date"
-                      value={dateOfBirth}
-                      onChange={(e) => setDateOfBirth(e.target.value)}
-                      readOnly
-                      className="bg-gray-50"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="gender">Gender</Label>
-                  <div className="mt-1">
-                    <select
-                      id="gender"
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className="w-full rounded-md border border-gray-300 py-2 pl-3 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-fundeasy-blue"
-                      readOnly
-                      disabled
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="address">Residential Address</Label>
-                <div className="mt-1">
-                  <Textarea
-                    id="address"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    rows={3}
-                    readOnly
-                    className="bg-gray-50"
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">Address from Aadhaar will be used for communication.</p>
-              </div>
-              
-              <div>
-                <Label>Address Proof Document</Label>
-                <div className="mt-3 space-y-3">
-                  <div className="flex items-center">
-                    <input
-                      id="address_aadhaar"
-                      name="address_proof"
-                      type="radio"
-                      className="h-4 w-4 border-gray-300 text-fundeasy-blue focus:ring-fundeasy-blue"
-                      checked={addressProof === 'aadhaar'}
-                      onChange={() => setAddressProof('aadhaar')}
-                    />
-                    <label htmlFor="address_aadhaar" className="ml-3 text-sm text-gray-700">
-                      Use Aadhaar Address (Recommended)
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="address_other"
-                      name="address_proof"
-                      type="radio"
-                      className="h-4 w-4 border-gray-300 text-fundeasy-blue focus:ring-fundeasy-blue"
-                      checked={addressProof === 'other'}
-                      onChange={() => setAddressProof('other')}
-                    />
-                    <label htmlFor="address_other" className="ml-3 text-sm text-gray-700">
-                      Upload Different Address Proof
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
-              {addressProof === 'other' && (
-                <div className="p-4 border border-dashed border-gray-300 rounded-md">
-                  <div className="flex flex-col items-center">
-                    <FileText className="h-8 w-8 text-gray-400" />
-                    <div className="mt-2 text-center">
-                      <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-fundeasy-blue hover:text-fundeasy-dark-blue">
-                        <span>Upload a document</span>
-                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                      </label>
-                      <p className="text-xs text-gray-500">
-                        Passport, Voter ID, Utility Bill or Bank Statement (Last 3 Months)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          
-          {step === 4 && (
-            <div className="space-y-6">
-              <div>
-                <Label htmlFor="bankAccountNumber">Bank Account Number</Label>
-                <div className="mt-1">
-                  <Input
-                    id="bankAccountNumber"
-                    placeholder="Enter your bank account number"
-                    value={bankAccountNumber}
-                    onChange={(e) => setBankAccountNumber(e.target.value.replace(/\D/g, ''))}
-                    inputMode="numeric"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="ifscCode">IFSC Code</Label>
-                <div className="mt-1">
-                  <Input
-                    id="ifscCode"
-                    placeholder="e.g., SBIN0001234"
-                    value={ifscCode}
-                    onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
-                    className="uppercase"
-                    maxLength={11}
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">11-character code that identifies your bank branch.</p>
-              </div>
-              
-              {bankName && (
-                <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                  <p className="text-sm text-green-800">
-                    <span className="font-medium">Bank Verified:</span> {bankName}
-                  </p>
-                </div>
-              )}
-              
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-md flex items-start">
-                <Info className="text-blue-500 mr-2 mt-0.5 h-4 w-4 flex-shrink-0" />
-                <p className="text-xs text-blue-800">
-                  We'll verify your bank account with a small deposit (₹1) which will be refunded immediately. This ensures your account is active and valid for transactions.
-                </p>
-              </div>
-              
-              <div className="p-4 border border-dashed border-gray-300 rounded-md">
-                <div className="flex flex-col items-center">
-                  <FileText className="h-8 w-8 text-gray-400" />
-                  <div className="mt-2 text-center">
-                    <label htmlFor="bank-doc-upload" className="relative cursor-pointer rounded-md font-medium text-fundeasy-blue hover:text-fundeasy-dark-blue">
-                      <span>Upload a cancelled cheque or bank statement</span>
-                      <input id="bank-doc-upload" name="bank-doc-upload" type="file" className="sr-only" />
-                    </label>
-                    <p className="text-xs text-gray-500">
-                      This will help verify your bank account ownership
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {step === 5 && (
-            <div className="space-y-6">
-              <div>
-                <Label>Tax Residency Status</Label>
-                <div className="mt-3 space-y-3">
-                  <div className="flex items-center">
-                    <input
-                      id="tax_india"
-                      name="tax_residency"
-                      type="radio"
-                      className="h-4 w-4 border-gray-300 text-fundeasy-blue focus:ring-fundeasy-blue"
-                      checked={taxResidency === 'india'}
-                      onChange={() => setTaxResidency('india')}
-                    />
-                    <label htmlFor="tax_india" className="ml-3 text-sm text-gray-700">
-                      I am a tax resident of India only
-                    </label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      id="tax_other"
-                      name="tax_residency"
-                      type="radio"
-                      className="h-4 w-4 border-gray-300 text-fundeasy-blue focus:ring-fundeasy-blue"
-                      checked={taxResidency === 'other'}
-                      onChange={() => setTaxResidency('other')}
-                    />
-                    <label htmlFor="tax_other" className="ml-3 text-sm text-gray-700">
-                      I am a tax resident of country other than India
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
-              {taxResidency === 'other' && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
-                  <p className="text-sm text-amber-800">
-                    Additional documentation may be required for non-Indian tax residents. Our team will contact you for the necessary documents.
-                  </p>
-                </div>
-              )}
-              
-              <div>
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <Checkbox 
-                      id="pep" 
-                      checked={isPEP}
-                      onCheckedChange={(checked) => setIsPEP(!!checked)}
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="pep" className="font-medium text-gray-700">Politically Exposed Person</label>
-                    <p className="text-xs text-gray-500">
-                      I am a politically exposed person or related to someone who is.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="pt-4 border-t border-gray-200">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <Checkbox 
-                      id="fatca_declaration" 
-                      checked={termsAccepted}
-                      onCheckedChange={(checked) => setTermsAccepted(!!checked)}
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="fatca_declaration" className="font-medium text-gray-700">FATCA Declaration</label>
-                    <p className="text-xs text-gray-500">
-                      I hereby declare that the information provided is true and correct. I also understand that any willful dishonesty may render for refusal of this application.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {step === 6 && (
-            <div className="space-y-6">
-              <div className="text-center">
-                <Camera className="h-12 w-12 mx-auto text-fundeasy-blue" />
-                <h3 className="mt-2 text-lg font-medium">Complete Video KYC</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Video KYC is required for full KYC approval and removing investment limits.
-                </p>
-              </div>
-              
-              <div className="bg-gray-50 p-4 rounded-md space-y-3">
-                <h4 className="font-medium">Requirements:</h4>
-                <ul className="text-sm space-y-2">
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                    <span>Have your PAN card ready</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                    <span>Ensure good lighting and clear visibility</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                    <span>Find a quiet place for the call</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                    <span>Video call duration: Approx. 2-3 minutes</span>
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="flex flex-col space-y-3">
-                <Button
-                  onClick={() => {
-                    toast({
-                      title: "Video KYC Scheduled",
-                      description: "Your video KYC has been scheduled for tomorrow between 10 AM - 6 PM.",
-                    });
-                    setStep(7);
-                  }}
-                  className="bg-fundeasy-green hover:bg-fundeasy-dark-green"
-                >
-                  Schedule Video KYC
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(7)}
-                >
-                  Skip for now (₹50,000 investment limit)
-                </Button>
-              </div>
-            </div>
-          )}
-          
-          {step === 7 && (
-            <div className="space-y-6">
-              <div className="text-center">
-                <Link className="h-12 w-12 mx-auto text-fundeasy-blue" />
-                <h3 className="mt-2 text-lg font-medium">Digital Signature</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Sign your KYC documents electronically using Aadhaar e-Sign
-                </p>
-              </div>
-              
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <p className="text-sm text-blue-800">
-                  An OTP will be sent to your Aadhaar-linked mobile number for digital signature.
-                </p>
-              </div>
-              
-              <div className="flex flex-col space-y-3">
-                <Button
-                  onClick={() => {
-                    toast({
-                      title: "Documents Signed",
-                      description: "Your KYC documents have been successfully signed.",
-                    });
-                    setStep(8);
-                  }}
-                  className="bg-fundeasy-blue hover:bg-fundeasy-dark-blue"
-                >
-                  Proceed with e-Sign
-                </Button>
-              </div>
-            </div>
-          )}
-          
-          {step === 8 && (
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <Check className="h-10 w-10 text-green-600" />
-                </div>
-                <h3 className="mt-4 text-lg font-medium">KYC Submission Successful</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  Your KYC details have been submitted for verification
-                </p>
-              </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                <div className="px-4 py-5 sm:px-6 bg-gray-50">
-                  <h3 className="text-sm font-medium text-gray-900">KYC Status</h3>
-                </div>
-                <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 bg-amber-100 rounded-full flex items-center justify-center">
-                        <Clock className="h-4 w-4 text-amber-600" />
-                      </div>
-                      <span className="ml-3 font-medium">KYC Status</span>
-                    </div>
-                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
-                      Pending
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <Calendar className="h-4 w-4 text-green-600" />
-                      </div>
-                      <span className="ml-3 font-medium">Expected Completion</span>
-                    </div>
-                    <span className="text-sm">
-                      Within 24 hours
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between py-3">
-                    <div className="flex items-center">
-                      <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Banknote className="h-4 w-4 text-blue-600" />
-                      </div>
-                      <span className="ml-3 font-medium">Current Investment Limit</span>
-                    </div>
-                    <span className="text-sm">
-                      ₹50,000 per AMC
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-md flex items-start">
-                <Info className="text-blue-500 mr-2 mt-0.5 h-4 w-4 flex-shrink-0" />
-                <p className="text-xs text-blue-800">
-                  You can start investing up to ₹50,000 per AMC while your full KYC verification is pending. Complete Video KYC to remove this limit.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
+            </CardContent>
+          </Card>
+        )}
         
-        {/* Bottom Navigation Buttons */}
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={isLoading}
-          >
-            <ArrowLeft className="mr-1" size={16} />
-            {step === 1 ? 'Back' : 'Previous'}
-          </Button>
-          
-          {step < totalSteps ? (
-            <Button
-              onClick={handleNext}
-              disabled={isLoading}
-              className="bg-fundeasy-blue hover:bg-fundeasy-dark-blue"
-            >
-              {isLoading ? 'Processing...' : 'Next'}
-              {!isLoading && <ArrowRight className="ml-1" size={16} />}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              className="bg-fundeasy-green hover:bg-fundeasy-dark-green"
-            >
-              Complete KYC
-            </Button>
-          )}
-        </div>
+        {currentStep === KYCStep.ADDRESS_PROOF && (
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="address" className="text-sm font-medium">Address</label>
+                <Input 
+                  id="address" 
+                  value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="pincode" className="text-sm font-medium">Pincode</label>
+                <Input 
+                  id="pincode" 
+                  value={formData.pincode}
+                  onChange={(e) => handleInputChange('pincode', e.target.value)}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="city" className="text-sm font-medium">City</label>
+                  <Input 
+                    id="city" 
+                    value={formData.city}
+                    onChange={(e) => handleInputChange('city', e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="state" className="text-sm font-medium">State</label>
+                  <Input 
+                    id="state" 
+                    value={formData.state}
+                    onChange={(e) => handleInputChange('state', e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Upload Address Proof</label>
+                <div className="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center">
+                  <div className="flex justify-center mb-2">
+                    <FileText className="text-gray-400" />
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">Upload address proof document</p>
+                  <p className="text-xs text-gray-400">Aadhaar, Passport, Driving License, etc.</p>
+                  <input type="file" className="hidden" id="address-upload" />
+                  <Button 
+                    variant="outline" 
+                    className="mt-3 text-sm"
+                    onClick={() => document.getElementById('address-upload')?.click()}
+                  >
+                    <Upload size={14} className="mr-1" /> Upload Document
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {currentStep === KYCStep.BANK_ACCOUNT && (
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="account" className="text-sm font-medium">Bank Account Number</label>
+                <Input 
+                  id="account" 
+                  value={formData.bankAccount}
+                  onChange={(e) => handleInputChange('bankAccount', e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="ifsc" className="text-sm font-medium">IFSC Code</label>
+                <Input 
+                  id="ifsc" 
+                  value={formData.ifsc}
+                  onChange={(e) => handleInputChange('ifsc', e.target.value.toUpperCase())}
+                />
+                <p className="text-xs text-gray-500">e.g. SBIN0001234</p>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="bank-name" className="text-sm font-medium">Bank Name</label>
+                <Input 
+                  id="bank-name" 
+                  value={formData.bankName}
+                  onChange={(e) => handleInputChange('bankName', e.target.value)}
+                />
+              </div>
+              
+              <div className="p-3 bg-yellow-50 rounded-lg flex items-start space-x-2">
+                <AlertTriangle size={16} className="text-yellow-500 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-yellow-800">
+                  Ensure that you add a bank account that is in your name. The name on your bank account should match with your KYC details.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        
+        {currentStep === KYCStep.REVIEW && (
+          <Card>
+            <CardContent className="p-4 space-y-4">
+              <div className="flex items-center justify-center py-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle2 size={32} className="text-fundeasy-green" />
+                </div>
+              </div>
+              
+              <h3 className="text-center font-medium">Review Your KYC Details</h3>
+              <p className="text-center text-sm text-gray-500">Please review all details before final submission</p>
+              
+              <div className="space-y-3 pt-2">
+                <div>
+                  <h4 className="text-sm font-medium">Personal Information</h4>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-1 text-sm">
+                    <div className="text-gray-500">Full Name</div>
+                    <div>{formData.name}</div>
+                    <div className="text-gray-500">Date of Birth</div>
+                    <div>{formData.dob}</div>
+                    <div className="text-gray-500">Mobile Number</div>
+                    <div>{formData.mobile}</div>
+                    <div className="text-gray-500">Email</div>
+                    <div>{formData.email}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium">PAN Details</h4>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-1 text-sm">
+                    <div className="text-gray-500">PAN Number</div>
+                    <div>{formData.panNumber}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium">Address Information</h4>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-1 text-sm">
+                    <div className="text-gray-500">Address</div>
+                    <div>{formData.address}</div>
+                    <div className="text-gray-500">City</div>
+                    <div>{formData.city}</div>
+                    <div className="text-gray-500">State</div>
+                    <div>{formData.state}</div>
+                    <div className="text-gray-500">Pincode</div>
+                    <div>{formData.pincode}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-sm font-medium">Bank Details</h4>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-1 text-sm">
+                    <div className="text-gray-500">Bank Name</div>
+                    <div>{formData.bankName}</div>
+                    <div className="text-gray-500">Account Number</div>
+                    <div>{formData.bankAccount}</div>
+                    <div className="text-gray-500">IFSC Code</div>
+                    <div>{formData.ifsc}</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
       
-      {/* Info Dialog */}
-      <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>About KYC Verification</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-sm">
-            <p>
-              KYC (Know Your Customer) is a mandatory process required by SEBI for all mutual fund investments in India.
-            </p>
-            <h4 className="font-medium">Why is KYC required?</h4>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>To prevent identity theft and fraud</li>
-              <li>To comply with anti-money laundering regulations</li>
-              <li>To ensure proper tax compliance</li>
-            </ul>
-            <h4 className="font-medium">Investment Limits:</h4>
-            <p>
-              Basic e-KYC: Up to ₹50,000 per AMC per year<br />
-              Full KYC with Video Verification: No investment limits
-            </p>
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
-              <p className="text-xs text-blue-800">
-                Your information is secure and will only be used for KYC verification purposes as per SEBI guidelines.
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Button 
+        onClick={handleNextStep}
+        className="w-full bg-fundeasy-green"
+        disabled={!isStepComplete(currentStep)}
+      >
+        {currentStep === KYCStep.REVIEW ? 'Submit KYC' : 'Continue'} <ArrowRight size={16} className="ml-1" />
+      </Button>
     </PageContainer>
+  );
+};
+
+interface StepIndicatorProps {
+  number: number;
+  title: string;
+  isActive: boolean;
+  isCompleted: boolean;
+}
+
+const StepIndicator: React.FC<StepIndicatorProps> = ({ number, title, isActive, isCompleted }) => {
+  return (
+    <div className="flex flex-col items-center">
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+        isCompleted ? 'bg-fundeasy-green text-white' : 
+        isActive ? 'bg-green-100 text-fundeasy-green border border-fundeasy-green' : 
+        'bg-gray-100 text-gray-500'
+      }`}>
+        {isCompleted ? (
+          <CheckCircle2 size={16} />
+        ) : (
+          number
+        )}
+      </div>
+      <span className={`text-xs mt-1 ${isActive || isCompleted ? 'text-fundeasy-green' : 'text-gray-500'}`}>
+        {title}
+      </span>
+    </div>
   );
 };
 

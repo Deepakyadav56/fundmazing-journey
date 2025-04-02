@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, TrendingUp, Wallet, User } from 'lucide-react';
+import { Home, Search, PieChart, User, TrendingUp, Bell } from 'lucide-react';
 
 const BottomNavbar = () => {
   const location = useLocation();
@@ -10,30 +10,33 @@ const BottomNavbar = () => {
     { path: "/dashboard", name: "Home", icon: Home },
     { path: "/explore", name: "Explore", icon: Search },
     { path: "/market-news", name: "Market", icon: TrendingUp },
-    { path: "/portfolio", name: "Portfolio", icon: Wallet },
+    { path: "/notifications", name: "Alerts", icon: Bell },
     { path: "/profile", name: "Profile", icon: User },
   ];
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-nav py-3 px-4 flex justify-around z-50 rounded-t-2xl border-t border-gray-100">
+    <div className="fixed bottom-0 left-0 right-0 glass-effect py-2 px-4 flex justify-around z-50">
       {navItems.map((item) => {
         const isActive = location.pathname === item.path;
         return (
           <Link 
             key={item.path} 
             to={item.path} 
-            className="flex flex-col items-center justify-center w-16"
-          >
-            <div className={`p-2 rounded-full transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center w-16 ${
               isActive 
-                ? 'bg-fundeasy-accent-bg text-fundeasy-blue' 
-                : 'text-gray-400'
-            }`}>
-              <item.icon size={20} />
+                ? 'text-fundeasy-blue font-medium' 
+                : 'text-gray-500'
+            }`}
+          >
+            <div className={`relative ${isActive ? 'animate-bounce-subtle' : ''}`}>
+              <div className={`p-1.5 rounded-full ${isActive ? 'bg-blue-100' : ''}`}>
+                <item.icon size={20} />
+              </div>
+              {isActive && (
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-fundeasy-blue rounded-full" />
+              )}
             </div>
-            <span className={`text-xs mt-1 font-medium transition-colors ${
-              isActive ? 'text-fundeasy-blue' : 'text-gray-500'
-            }`}>{item.name}</span>
+            <span className="text-xs mt-1">{item.name}</span>
           </Link>
         );
       })}

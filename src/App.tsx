@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
 import Welcome from "./pages/Welcome";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
@@ -30,7 +29,6 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import KYCVerification from "./pages/KYCVerification";
 import StartSIP from "./pages/StartSIP";
 import RedeemFund from "./pages/RedeemFund";
-import "./App.css";
 
 const queryClient = new QueryClient();
 
@@ -39,8 +37,7 @@ const App = () => (
     <BrowserRouter>
       <TooltipProvider>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/" element={<Welcome />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/explore" element={<Explore />} />

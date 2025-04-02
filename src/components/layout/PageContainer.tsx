@@ -32,39 +32,34 @@ const PageContainer = ({
   const navigate = useNavigate();
   
   return (
-    <div className={cn("min-h-screen bg-fundeasy-light-gray pb-16", className)}>
+    <div className={cn("min-h-screen bg-gradient-to-b from-blue-50 to-white pb-16", className)}>
       {(title || showBackButton) && (
-        <div className={cn(
-          "sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm", 
-          headerClassName
-        )}>
-          <div className="flex items-center justify-between px-4 py-4">
-            <div className="flex items-center gap-3">
+        <div className={cn("sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm", headerClassName)}>
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-2">
               {showBackButton && (
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="h-9 w-9 rounded-full bg-fundeasy-accent-bg text-fundeasy-blue"
+                  className="h-8 w-8 rounded-full"
                   onClick={() => navigate(-1)}
                 >
                   <ArrowLeft size={18} />
                 </Button>
               )}
               {title && (
-                <h1 className={cn("text-xl font-semibold text-gray-800", titleClassName)}>
-                  {title}
-                </h1>
+                <h1 className={cn("text-xl font-semibold", titleClassName)}>{title}</h1>
               )}
             </div>
             {headerRight && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 {headerRight}
               </div>
             )}
           </div>
         </div>
       )}
-      <div className={cn("px-4 py-4 animate-fade-in", contentClassName)}>
+      <div className={cn("p-4 animate-fade-in", contentClassName)}>
         {children}
       </div>
       {showNavbar && <BottomNavbar />}
