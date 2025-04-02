@@ -1,380 +1,403 @@
 
 import React, { useState } from 'react';
+import { ArrowLeft, X, Search, TrendingUp, TrendingDown, Info, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, X, Plus, PlusCircle, BarChart2, TrendingUp } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer,
-  LineChart,
-  Line
-} from 'recharts';
-import PageContainer from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { mockMutualFunds } from '@/utils/mockData';
-import { MutualFund } from '@/types';
+import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
+import { mockMutualFunds, MutualFund } from '@/utils/mockData';
 
 const FundComparison = () => {
   const navigate = useNavigate();
+  const [selectedFunds, setSelectedFunds] = useState<string[]>(['fund1', 'fund3']);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFunds, setSelectedFunds] = useState<MutualFund[]>([]);
-  const [isSelectingFunds, setIsSelectingFunds] = useState(false);
-
-  // Filter funds based on search query
-  const filteredFunds = mockMutualFunds.filter(fund => {
-    return fund.name.toLowerCase().includes(searchQuery.toLowerCase());
-  });
-
-  // Handle fund selection
-  const handleFundSelect = (fund: MutualFund) => {
-    if (selectedFunds.length >= 3) {
-      // Limit to 3 funds for comparison
-      return;
+  const [showFundSelector, setShowFundSelector] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState('1y');
+  
+  const filteredFunds = mockMutualFunds.filter(fund => 
+    fund.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+  const selectedFundObjects = mockMutualFunds.filter(fund => 
+    selectedFunds.includes(fund.id)
+  );
+  
+  const addFund = (fundId: string) => {
+    if (selectedFunds.length < 3 && !selectedFunds.includes(fundId)) {
+      setSelectedFunds([...selectedFunds, fundId]);
     }
-    if (!selectedFunds.some(f => f.id === fund.id)) {
-      setSelectedFunds([...selectedFunds, fund]);
-    }
-    if (selectedFunds.length === 2) {
-      setIsSelectingFunds(false);
+    setShowFundSelector(false);
+    setSearchQuery('');
+  };
+  
+  const removeFund = (fundId: string) => {
+    setSelectedFunds(selectedFunds.filter(id => id !== fundId));
+  };
+  
+  const renderReturnValue = (fund: MutualFund) => {
+    switch (selectedPeriod) {
+      case '1y':
+        return fund.returns.oneYear;
+      case '3y':
+        return fund.returns.threeYear;
+      case '5y':
+        return fund.returns.fiveYear;
+      default:
+        return fund.returns.oneYear;
     }
   };
-
-  const handleRemoveFund = (fundId: string) => {
-    setSelectedFunds(selectedFunds.filter(fund => fund.id !== fundId));
-  };
-
-  // Prepare data for comparison charts
-  const returnsData = [
-    { name: '1Y Returns', ...selectedFunds.reduce((acc, fund) => ({ ...acc, [fund.name]: fund.returns.oneYear }), {}) },
-    { name: '3Y Returns', ...selectedFunds.reduce((acc, fund) => ({ ...acc, [fund.name]: fund.returns.threeYear }), {}) },
-    { name: '5Y Returns', ...selectedFunds.reduce((acc, fund) => ({ ...acc, [fund.name]: fund.returns.fiveYear }), {}) },
-  ];
-
-  const riskData = selectedFunds.map(fund => ({
-    name: fund.name,
-    risk: fund.risk === 'Low' ? 2 : fund.risk === 'Moderate' ? 5 : 8,
-    expenseRatio: fund.expenseRatio,
-    aum: fund.aum
-  }));
-
-  // Generate random historical NAV data for demo
-  const generateHistoricalData = () => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months.map((month, index) => {
-      const data: any = { name: month };
-      selectedFunds.forEach(fund => {
-        // Random value between 95 and 115 with progressive growth
-        const startValue = 100;
-        const growthFactor = 1 + (fund.returns.oneYear / 100 / 12);
-        data[fund.name] = Math.round((startValue * Math.pow(growthFactor, index)) * 100) / 100;
-      });
-      return data;
-    });
-  };
-
-  const historicalNavData = generateHistoricalData();
-
-  // Custom colors for funds
-  const fundColors = ['#00C853', '#2196F3', '#FFC107'];
-
+  
   return (
-    <PageContainer title="Compare Funds" showBackButton>
-      {isSelectingFunds ? (
-        <div className="animated-fade-in">
-          <div className="mb-4">
-            <Input
-              placeholder="Search funds..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="mb-2"
-            />
-            <div className="flex flex-wrap gap-2 mb-2">
-              {selectedFunds.map(fund => (
-                <div 
-                  key={fund.id} 
-                  className="bg-gray-100 px-2 py-1 rounded-full text-xs flex items-center"
-                >
-                  {fund.name.length > 20 ? fund.name.substring(0, 20) + '...' : fund.name}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-4 w-4 ml-1 p-0"
-                    onClick={() => handleRemoveFund(fund.id)}
-                  >
-                    <X size={12} />
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mb-4">
-              {selectedFunds.length === 0 
-                ? "Select up to 3 funds to compare" 
-                : `Selected ${selectedFunds.length}/3 funds`}
-            </p>
-          </div>
-
-          <div className="space-y-2 mb-4">
-            {filteredFunds.slice(0, 10).map(fund => (
-              <Card 
-                key={fund.id} 
-                className={`hover:bg-gray-50 transition cursor-pointer ${
-                  selectedFunds.some(f => f.id === fund.id) ? 'border-fundeasy-green' : ''
-                }`}
-                onClick={() => handleFundSelect(fund)}
-              >
-                <CardContent className="p-3">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-sm line-clamp-2">{fund.name}</p>
-                      <p className="text-xs text-gray-500">{fund.category} • {fund.risk} Risk</p>
-                    </div>
-                    {selectedFunds.some(f => f.id === fund.id) ? (
-                      <div className="h-5 w-5 bg-fundeasy-green rounded-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    ) : (
-                      <PlusCircle size={18} className="text-gray-400" />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="flex justify-between mt-6">
-            <Button variant="outline" onClick={() => setIsSelectingFunds(false)}>
-              Cancel
-            </Button>
-            <Button 
-              className="bg-fundeasy-green hover:bg-fundeasy-dark-green"
-              onClick={() => setIsSelectingFunds(false)}
-              disabled={selectedFunds.length < 2}
-            >
-              Compare ({selectedFunds.length})
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white sticky top-0 z-10 shadow-sm">
+        <div className="flex items-center p-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={20} />
+          </Button>
+          <h1 className="text-lg font-medium ml-2">Compare Funds</h1>
         </div>
-      ) : (
-        <div className="animated-fade-in">
-          {selectedFunds.length < 2 ? (
-            <div className="flex flex-col items-center justify-center py-10">
-              <BarChart2 size={48} className="text-gray-300 mb-4" />
-              <p className="text-gray-500 mb-6">Select at least 2 funds to compare</p>
-              <Button 
-                className="bg-fundeasy-green hover:bg-fundeasy-dark-green"
-                onClick={() => setIsSelectingFunds(true)}
+      </div>
+      
+      {/* Selected Funds */}
+      <div className="px-4 py-6">
+        <div className="grid grid-cols-3 gap-2 mb-6">
+          {selectedFundObjects.map(fund => (
+            <Card key={fund.id} className="card-shadow relative">
+              <button 
+                className="absolute top-1 right-1 text-gray-400 z-10"
+                onClick={() => removeFund(fund.id)}
               >
-                <Plus size={16} className="mr-1" /> Select Funds
-              </Button>
-            </div>
-          ) : (
-            <>
-              <div className="flex justify-between mb-6">
-                <div>
-                  <h2 className="font-medium">Comparing {selectedFunds.length} Funds</h2>
-                  <p className="text-xs text-gray-500">See how these funds perform against each other</p>
+                <X size={16} />
+              </button>
+              <CardContent className="p-3">
+                <h3 className="text-sm font-medium line-clamp-2 min-h-[40px]">{fund.name}</h3>
+                <div className="text-xs text-gray-500 mb-2">{fund.category}</div>
+                <div className="flex items-center text-fundeasy-green">
+                  <TrendingUp size={14} className="mr-0.5" />
+                  <span className="font-medium">{fund.returns.oneYear}%</span>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setIsSelectingFunds(true)}
-                >
-                  <Plus size={14} className="mr-1" /> Edit
-                </Button>
-              </div>
-
-              <div className="space-y-2 mb-6">
-                {selectedFunds.map((fund, index) => (
-                  <Card key={fund.id} className="hover:shadow-sm transition">
-                    <CardContent className="p-3">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center">
-                          <div 
-                            className="h-3 w-3 rounded-full mr-2" 
-                            style={{ backgroundColor: fundColors[index % fundColors.length] }}
-                          ></div>
-                          <div>
-                            <p className="font-medium text-sm">{fund.name}</p>
-                            <p className="text-xs text-gray-500">{fund.category} • {fund.risk} Risk</p>
-                          </div>
-                        </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-6 w-6 p-0"
-                          onClick={() => navigate(`/fund/${fund.id}`)}
-                        >
-                          <ChevronRight size={16} />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              <Tabs defaultValue="returns">
-                <TabsList className="grid grid-cols-3 mb-6">
-                  <TabsTrigger value="returns">Returns</TabsTrigger>
-                  <TabsTrigger value="performance">Performance</TabsTrigger>
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="returns" className="animated-fade-in">
-                  <Card className="mb-6">
-                    <CardContent className="p-4">
-                      <h3 className="font-medium mb-4">Returns Comparison (%)</h3>
-                      <div className="h-[250px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={returnsData}
-                            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                          >
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            {selectedFunds.map((fund, index) => (
-                              <Bar 
-                                key={fund.id} 
-                                dataKey={fund.name} 
-                                fill={fundColors[index % fundColors.length]} 
-                              />
-                            ))}
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                
-                <TabsContent value="performance" className="animated-fade-in">
-                  <Card className="mb-6">
-                    <CardContent className="p-4">
-                      <h3 className="font-medium mb-4">NAV History (1 Year)</h3>
-                      <div className="h-[250px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart
-                            data={historicalNavData}
-                            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                          >
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            {selectedFunds.map((fund, index) => (
-                              <Line 
-                                key={fund.id} 
-                                type="monotone" 
-                                dataKey={fund.name} 
-                                stroke={fundColors[index % fundColors.length]} 
-                                strokeWidth={2}
-                                dot={false}
-                              />
-                            ))}
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                
-                <TabsContent value="details" className="animated-fade-in">
-                  <Card>
-                    <CardContent className="p-0">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="bg-gray-50">
-                            <th className="text-left p-3 border-b">Fund Details</th>
-                            {selectedFunds.map(fund => (
-                              <th key={fund.id} className="text-left p-3 border-b">
-                                <span className="line-clamp-2">{fund.name}</span>
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="p-3 border-b">Category</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b">{fund.category}</td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">Risk Level</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b">{fund.risk}</td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">NAV</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b">₹{fund.navValue.toFixed(2)}</td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">1Y Returns</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b text-fundeasy-green">
-                                {fund.returns.oneYear}%
-                              </td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">3Y Returns</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b text-fundeasy-green">
-                                {fund.returns.threeYear}%
-                              </td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">Expense Ratio</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b">{fund.expenseRatio}%</td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">Fund Size</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b">₹{fund.aum} Cr</td>
-                            ))}
-                          </tr>
-                          <tr>
-                            <td className="p-3 border-b">Fund Manager</td>
-                            {selectedFunds.map(fund => (
-                              <td key={fund.id} className="p-3 border-b">{fund.fundManager}</td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </CardContent>
-                  </Card>
-                  
-                  <div className="mt-8 mb-16 flex justify-center">
-                    <Button 
-                      variant="outline"
-                      onClick={() => setIsSelectingFunds(true)}
-                    >
-                      Compare Different Funds
-                    </Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </>
+                <div className="text-xs text-gray-500">1Y Returns</div>
+              </CardContent>
+            </Card>
+          ))}
+          
+          {selectedFunds.length < 3 && (
+            <Card 
+              className="card-shadow flex items-center justify-center cursor-pointer"
+              onClick={() => setShowFundSelector(true)}
+            >
+              <CardContent className="p-3 flex flex-col items-center">
+                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                  <Plus size={16} />
+                </div>
+                <span className="text-xs text-gray-500">Add Fund</span>
+              </CardContent>
+            </Card>
           )}
         </div>
+        
+        <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+          <SelectTrigger className="w-full mb-4">
+            <SelectValue placeholder="Select comparison period" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1y">1 Year Returns</SelectItem>
+            <SelectItem value="3y">3 Year Returns</SelectItem>
+            <SelectItem value="5y">5 Year Returns</SelectItem>
+          </SelectContent>
+        </Select>
+      
+        <Tabs defaultValue="returns">
+          <TabsList className="w-full mb-4">
+            <TabsTrigger value="returns" className="flex-1">Returns</TabsTrigger>
+            <TabsTrigger value="risk" className="flex-1">Risk</TabsTrigger>
+            <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="returns">
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-medium mb-4">Returns Comparison</h3>
+                
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between text-sm text-gray-500 mb-2">
+                      <span>1Y Returns</span>
+                      <span>Performance</span>
+                    </div>
+                    
+                    {selectedFundObjects.map(fund => (
+                      <div key={fund.id} className="flex items-center mb-2">
+                        <div className="w-24 text-sm line-clamp-1 mr-2">{fund.name.split(' ')[0]}</div>
+                        <Progress 
+                          value={fund.returns.oneYear} 
+                          max={30}
+                          className="flex-1 h-6" 
+                          indicatorClassName="bg-fundeasy-blue flex items-center justify-end pr-2"
+                        />
+                        <div className="w-12 text-sm text-right ml-2">{fund.returns.oneYear}%</div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm text-gray-500 mb-2">
+                      <span>3Y Returns</span>
+                      <span>Performance</span>
+                    </div>
+                    
+                    {selectedFundObjects.map(fund => (
+                      <div key={fund.id} className="flex items-center mb-2">
+                        <div className="w-24 text-sm line-clamp-1 mr-2">{fund.name.split(' ')[0]}</div>
+                        <Progress 
+                          value={fund.returns.threeYear} 
+                          max={30}
+                          className="flex-1 h-6" 
+                          indicatorClassName="bg-fundeasy-blue flex items-center justify-end pr-2"
+                        />
+                        <div className="w-12 text-sm text-right ml-2">{fund.returns.threeYear}%</div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm text-gray-500 mb-2">
+                      <span>5Y Returns</span>
+                      <span>Performance</span>
+                    </div>
+                    
+                    {selectedFundObjects.map(fund => (
+                      <div key={fund.id} className="flex items-center mb-2">
+                        <div className="w-24 text-sm line-clamp-1 mr-2">{fund.name.split(' ')[0]}</div>
+                        <Progress 
+                          value={fund.returns.fiveYear} 
+                          max={30}
+                          className="flex-1 h-6" 
+                          indicatorClassName="bg-fundeasy-blue flex items-center justify-end pr-2"
+                        />
+                        <div className="w-12 text-sm text-right ml-2">{fund.returns.fiveYear}%</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="risk">
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-medium mb-4">Risk Analysis</h3>
+                
+                <div className="space-y-4">
+                  {selectedFundObjects.map(fund => (
+                    <div key={fund.id} className="border-b pb-4">
+                      <h4 className="font-medium mb-2">{fund.name}</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-500">Risk Level</p>
+                          <p className={`font-medium ${
+                            fund.risk === 'Low' ? 'text-green-600' : 
+                            fund.risk === 'Moderate' ? 'text-yellow-600' : 
+                            'text-red-600'
+                          }`}>{fund.risk}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Volatility</p>
+                          <p className="font-medium">{
+                            fund.risk === 'Low' ? 'Low' : 
+                            fund.risk === 'Moderate' ? 'Medium' : 
+                            'High'
+                          }</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Beta</p>
+                          <p className="font-medium">{
+                            fund.risk === 'Low' ? '0.75' : 
+                            fund.risk === 'Moderate' ? '0.95' : 
+                            '1.15'
+                          }</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500">Standard Deviation</p>
+                          <p className="font-medium">{
+                            fund.risk === 'Low' ? '8.2%' : 
+                            fund.risk === 'Moderate' ? '12.5%' : 
+                            '16.8%'
+                          }</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="details">
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-medium mb-4">Fund Details</h3>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[600px]">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left text-sm pb-2 font-medium">Detail</th>
+                        {selectedFundObjects.map(fund => (
+                          <th key={fund.id} className="text-left text-sm pb-2 font-medium">
+                            {fund.name.split(' ')[0]}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">Category</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">{fund.category}</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">Risk Level</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">{fund.risk}</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">AUM</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">₹{fund.aum} Cr.</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">Expense Ratio</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">{fund.expenseRatio}%</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">Fund Manager</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">{fund.fundManager}</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">Min. SIP</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">₹500</td>
+                        ))}
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-2 text-sm">Min. Lumpsum</td>
+                        {selectedFundObjects.map(fund => (
+                          <td key={fund.id} className="py-2 text-sm">₹5,000</td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+      
+      {/* Fund Selector Modal */}
+      {showFundSelector && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col">
+          <div className="bg-white rounded-t-xl mt-auto max-h-[80vh] overflow-y-auto">
+            <div className="p-4 border-b sticky top-0 bg-white z-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-medium">Select a Fund</h2>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => {
+                    setShowFundSelector(false);
+                    setSearchQuery('');
+                  }}
+                >
+                  <X size={20} />
+                </Button>
+              </div>
+              
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                <Input
+                  placeholder="Search funds..."
+                  className="pl-9"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            <div className="p-4">
+              {filteredFunds.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500">No funds match your search.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {filteredFunds.map(fund => (
+                    <Card 
+                      key={fund.id} 
+                      className={`cursor-pointer ${selectedFunds.includes(fund.id) ? 'border-fundeasy-blue' : ''}`}
+                      onClick={() => addFund(fund.id)}
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex justify-between">
+                          <div>
+                            <h4 className="font-medium line-clamp-1">{fund.name}</h4>
+                            <div className="text-xs text-gray-500">{fund.category}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center text-fundeasy-green">
+                              <TrendingUp size={14} className="mr-0.5" />
+                              <span className="font-medium">{fund.returns.oneYear}%</span>
+                            </div>
+                            <div className="text-xs text-gray-500">1Y Returns</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
-    </PageContainer>
+    </div>
   );
 };
+
+// Plus icon component to avoid importing an extra Lucide icon
+const Plus = ({ size = 24, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
 
 export default FundComparison;
