@@ -32,7 +32,7 @@ const PageContainer = ({
   const navigate = useNavigate();
   
   return (
-    <div className={cn("min-h-screen bg-gradient-to-b from-blue-50 to-white pb-16", className)}>
+    <div className={cn("min-h-screen bg-gradient-to-b from-fundeasy-light-green to-white pb-16", className)}>
       {(title || showBackButton) && (
         <div className={cn("sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm", headerClassName)}>
           <div className="flex items-center justify-between p-4">
@@ -48,7 +48,7 @@ const PageContainer = ({
                 </Button>
               )}
               {title && (
-                <h1 className={cn("text-xl font-semibold", titleClassName)}>{title}</h1>
+                <h1 className={cn("text-xl font-semibold text-fundeasy-dark-gray", titleClassName)}>{title}</h1>
               )}
             </div>
             {headerRight && (

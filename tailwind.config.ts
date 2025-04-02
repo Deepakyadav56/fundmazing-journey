@@ -64,18 +64,17 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				fundeasy: {
+					green: '#22ad78',
+					'light-green': '#deebc7',
+					'dark-gray': '#232323',
+					'light-gray': '#f2f2f2',
 					blue: '#2A5BFF',
 					'light-blue': '#5A7AFF',
 					'dark-blue': '#1D40D6',
-					green: '#00C853',
-					'light-green': '#66FFA6',
-					'dark-green': '#009624',
 					red: '#FF5252',
 					'light-red': '#FF8A80',
 					yellow: '#FFD740',
-					'light-gray': '#F5F5F5',
 					'medium-gray': '#E0E0E0',
-					'dark-gray': '#616161'
 				}
 			},
 			borderRadius: {

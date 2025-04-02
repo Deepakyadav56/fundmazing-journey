@@ -1,18 +1,16 @@
-
 import React from 'react';
-import { useParams } from 'react-router-dom';
-import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, BarChart, Bar 
-} from 'recharts';
-import { ArrowUpRight, Info } from 'lucide-react';
-import PageContainer from '@/components/layout/PageContainer';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { mockMutualFunds } from '@/utils/mockData';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { LineChart, PieChart, TrendingUp, Users, Info, Calendar } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import PageContainer from '@/components/layout/PageContainer';
+import FundLogo from '@/components/funds/FundLogo';
+import { useNavigate, useParams } from 'react-router-dom';
+import { mockFunds } from '@/utils/mockData';
+import { cn } from '@/lib/utils';
 
-// Mock performance data
 const performanceData = [
   { month: 'Jan', fundReturn: 1.2, benchmarkReturn: 0.8 },
   { month: 'Feb', fundReturn: -0.5, benchmarkReturn: -0.9 },
@@ -38,7 +36,7 @@ const portfolioData = [
 
 const FundAnalysis = () => {
   const { id } = useParams<{ id: string }>();
-  const fund = mockMutualFunds.find(f => f.id === id);
+  const fund = mockFunds.find(f => f.id === id);
   
   if (!fund) {
     return (

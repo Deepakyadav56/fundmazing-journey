@@ -22,7 +22,7 @@ const TopNavigation: React.FC = () => {
   ];
 
   return (
-    <div className="flex overflow-x-auto scrollbar-none border-b sticky top-0 bg-white z-10">
+    <div className="flex overflow-x-auto scrollbar-none border-b sticky top-0 bg-fundeasy-light-gray z-10">
       <div className="flex w-full">
         {navigationItems.map((item) => (
           <button
@@ -31,8 +31,8 @@ const TopNavigation: React.FC = () => {
             className={cn(
               'px-4 py-3 whitespace-nowrap transition-colors text-sm font-medium flex-1 relative',
               currentPath === item.path
-                ? 'text-fundeasy-blue'
-                : 'text-gray-600'
+                ? 'text-fundeasy-green'
+                : 'text-fundeasy-dark-gray'
             )}
           >
             {item.name}
@@ -42,7 +42,7 @@ const TopNavigation: React.FC = () => {
               </span>
             )}
             {currentPath === item.path && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-fundeasy-blue" />
+              <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-fundeasy-green" />
             )}
           </button>
         ))}

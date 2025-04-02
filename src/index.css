@@ -7,65 +7,65 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 95%;  /* #f2f2f2 */
+    --foreground: 0 0% 13.7%;  /* #232323 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 95%;  /* #f2f2f2 */
+    --card-foreground: 0 0% 13.7%;  /* #232323 */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 95%;  /* #f2f2f2 */
+    --popover-foreground: 0 0% 13.7%;  /* #232323 */
 
-    --primary: 225 100% 58%;  /* #2A5BFF */
-    --primary-foreground: 210 40% 98%;
+    --primary: 153 67% 41%;  /* #22ad78 */
+    --primary-foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 83 50% 85%;  /* #deebc7 */
+    --secondary-foreground: 0 0% 13.7%;  /* #232323 */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 30%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 83 50% 85%;  /* #deebc7 */
+    --accent-foreground: 0 0% 13.7%;  /* #232323 */
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 225 100% 58%;
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+    --ring: 153 67% 41%;  /* #22ad78 */
 
     --radius: 1rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 13.7%;  /* #232323 */
+    --foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 13.7%;  /* #232323 */
+    --card-foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 13.7%;  /* #232323 */
+    --popover-foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --primary: 225 100% 58%;  /* #2A5BFF */
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 153 67% 41%;  /* #22ad78 */
+    --primary-foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 83 50% 85%;  /* #deebc7 */
+    --secondary-foreground: 0 0% 13.7%;  /* #232323 */
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 83 50% 85%;  /* #deebc7 */
+    --accent-foreground: 0 0% 13.7%;  /* #232323 */
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 95%;  /* #f2f2f2 */
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 225 100% 58%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 153 67% 41%;  /* #22ad78 */
   }
 }
 
@@ -82,12 +82,8 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 
-  .blue-gradient {
-    @apply bg-gradient-to-r from-fundeasy-blue to-fundeasy-light-blue text-white;
-  }
-  
   .green-gradient {
-    @apply bg-gradient-to-r from-fundeasy-green to-fundeasy-light-green text-white;
+    @apply bg-gradient-to-r from-fundeasy-green to-[#4AD295] text-white;
   }
   
   .card-shadow {
@@ -97,15 +93,15 @@
 
 @layer components {
   .app-container {
-    @apply min-h-screen bg-gradient-to-b from-blue-50 to-white;
+    @apply min-h-screen bg-gradient-to-b from-secondary to-white;
   }
   
   .page-title {
-    @apply text-xl font-semibold text-gray-800;
+    @apply text-xl font-semibold text-fundeasy-dark-gray;
   }
   
   .section-title {
-    @apply text-lg font-medium text-gray-800 mb-3;
+    @apply text-lg font-medium text-fundeasy-dark-gray mb-3;
   }
   
   .stat-card {
@@ -125,11 +121,11 @@
   }
   
   .fund-card {
-    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-blue hover:shadow-md transition-all duration-200;
+    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-green hover:shadow-md transition-all duration-200;
   }
 
   .action-card {
-    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors;
+    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-fundeasy-light-gray hover:bg-gray-100 transition-colors;
   }
   
   .action-icon {

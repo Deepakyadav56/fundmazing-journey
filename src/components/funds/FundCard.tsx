@@ -66,17 +66,17 @@ const FundCard: React.FC<FundCardProps> = ({ fund, onClick }) => {
             <Progress 
               value={fund.returns.oneYear} 
               className="h-1" 
-              indicatorClassName={fund.returns.oneYear > 0 ? "bg-green-500" : "bg-red-500"}
+              indicatorClassName={fund.returns.oneYear > 0 ? "bg-fundeasy-green" : "bg-fundeasy-red"}
             />
             <Progress 
               value={fund.returns.threeYear} 
               className="h-1" 
-              indicatorClassName={fund.returns.threeYear > 0 ? "bg-green-500" : "bg-red-500"}
+              indicatorClassName={fund.returns.threeYear > 0 ? "bg-fundeasy-green" : "bg-fundeasy-red"}
             />
             <Progress 
               value={fund.returns.fiveYear} 
               className="h-1" 
-              indicatorClassName={fund.returns.fiveYear > 0 ? "bg-green-500" : "bg-red-500"}
+              indicatorClassName={fund.returns.fiveYear > 0 ? "bg-fundeasy-green" : "bg-fundeasy-red"}
             />
           </div>
           <div className="flex items-center justify-between text-xs font-medium mt-1">
