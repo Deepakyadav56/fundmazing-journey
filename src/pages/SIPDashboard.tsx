@@ -184,7 +184,11 @@ const SIPDashboard = () => {
             const daysUntilNext = getDaysUntilNextPayment(sip.nextDate);
             
             return (
-              <Card key={sip.id} className="hover:shadow-md transition-shadow">
+              <Card 
+                key={sip.id} 
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate(`/manage-sip/${sip.id}`)}
+              >
                 <CardContent className="p-4">
                   <div className="flex justify-between mb-1">
                     <span className={`text-xs px-2 py-0.5 rounded ${
@@ -196,7 +200,10 @@ const SIPDashboard = () => {
                       variant="ghost" 
                       size="sm" 
                       className="h-6 w-6 p-0"
-                      onClick={() => handlePauseResume(sip)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePauseResume(sip);
+                      }}
                     >
                       {sip.status === 'active' ? 
                         <Pause size={16} className="text-gray-500" /> : 
@@ -241,7 +248,10 @@ const SIPDashboard = () => {
                     <Button 
                       variant="link" 
                       className="text-fundeasy-green p-0 h-auto text-sm"
-                      onClick={() => navigate(`/fund/${sip.fundId}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/fund/${sip.fundId}`);
+                      }}
                     >
                       View Fund
                     </Button>

@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
 import Welcome from "./pages/Welcome";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
@@ -29,6 +31,8 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import KYCVerification from "./pages/KYCVerification";
 import StartSIP from "./pages/StartSIP";
 import RedeemFund from "./pages/RedeemFund";
+import ManageSIP from "./pages/ManageSIP";
+import SIPCalculator from "./pages/SIPCalculator";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +41,9 @@ const App = () => (
     <BrowserRouter>
       <TooltipProvider>
         <Routes>
-          <Route path="/" element={<Welcome />} />
+          <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/welcome" element={<Welcome />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/explore" element={<Explore />} />
@@ -48,9 +54,11 @@ const App = () => (
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/calculator" element={<Calculator />} />
+          <Route path="/sip-calculator" element={<SIPCalculator />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/sip-dashboard" element={<SIPDashboard />} />
+          <Route path="/manage-sip/:id" element={<ManageSIP />} />
           <Route path="/investment-history" element={<InvestmentHistory />} />
           <Route path="/fund-comparison" element={<FundComparison />} />
           <Route path="/market-news" element={<MarketNews />} />

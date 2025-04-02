@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TrendingUp, ArrowUpRight, Calendar, ChevronRight, Bell, Filter, Zap } from 'lucide-react';
+import { TrendingUp, ArrowUpRight, Calendar, ChevronRight, Bell, Filter, Zap, Calculator } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -135,7 +135,14 @@ const Dashboard = () => {
                   ))}
                 </div>
                 <div className="p-2 border-t text-center">
-                  <Button variant="ghost" size="sm" className="w-full text-sm">View All</Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full text-sm"
+                    onClick={() => navigate('/notifications')}
+                  >
+                    View All
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
@@ -156,7 +163,12 @@ const Dashboard = () => {
           <CardContent className="p-3">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-medium text-sm">Portfolio Value</h3>
-              <Button variant="ghost" size="sm" className="h-7 text-xs text-white/90 p-0">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 text-xs text-white/90 p-0"
+                onClick={() => navigate('/portfolio')}
+              >
                 View Details
                 <ArrowUpRight size={14} className="ml-1" />
               </Button>
@@ -193,7 +205,7 @@ const Dashboard = () => {
       <div className="px-4 mt-6">
         {/* SIP Summary */}
         <div className="flex gap-3 mb-6 overflow-x-auto pb-2 hide-scrollbar">
-          <Card className="min-w-[45%] flex-1 bg-blue-50 border-blue-100">
+          <Card className="min-w-[45%] flex-1 bg-blue-50 border-blue-100 cursor-pointer" onClick={() => navigate('/sip-dashboard')}>
             <CardContent className="p-3">
               <h3 className="text-sm font-medium text-blue-800">Active SIPs</h3>
               <div className="flex justify-between items-center mt-1">
@@ -206,7 +218,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           
-          <Card className="min-w-[45%] flex-1 bg-amber-50 border-amber-100">
+          <Card className="min-w-[45%] flex-1 bg-amber-50 border-amber-100 cursor-pointer" onClick={() => navigate('/goals')}>
             <CardContent className="p-3">
               <h3 className="text-sm font-medium text-amber-800">Goals</h3>
               <div className="flex justify-between items-center mt-1">
@@ -218,10 +230,48 @@ const Dashboard = () => {
                   <span>{portfolioData.goals.nearestGoal}</span>
                   <span>{portfolioData.goals.progress}%</span>
                 </div>
-                <Progress value={portfolioData.goals.progress} className="h-1.5" />
+                <Progress 
+                  value={portfolioData.goals.progress} 
+                  className="h-1.5 bg-amber-200" 
+                  indicatorClassName="bg-amber-500"
+                />
               </div>
             </CardContent>
           </Card>
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Quick Actions</h2>
+          <div className="grid grid-cols-3 gap-2">
+            <Card 
+              className="cursor-pointer hover:shadow-sm transition-shadow"
+              onClick={() => navigate('/sip-calculator')}
+            >
+              <CardContent className="p-2 flex flex-col items-center justify-center text-center">
+                <Calculator size={20} className="text-fundeasy-blue mb-1" />
+                <span className="text-xs">SIP Calculator</span>
+              </CardContent>
+            </Card>
+            <Card 
+              className="cursor-pointer hover:shadow-sm transition-shadow"
+              onClick={() => navigate('/watchlist')}
+            >
+              <CardContent className="p-2 flex flex-col items-center justify-center text-center">
+                <TrendingUp size={20} className="text-fundeasy-green mb-1" />
+                <span className="text-xs">Watchlist</span>
+              </CardContent>
+            </Card>
+            <Card 
+              className="cursor-pointer hover:shadow-sm transition-shadow"
+              onClick={() => navigate('/transactions')}
+            >
+              <CardContent className="p-2 flex flex-col items-center justify-center text-center">
+                <Calendar size={20} className="text-fundeasy-red mb-1" />
+                <span className="text-xs">Transactions</span>
+              </CardContent>
+            </Card>
+          </div>
         </div>
         
         {/* Market Indices */}
@@ -291,7 +341,14 @@ const Dashboard = () => {
                       <Badge className={`mb-2 ${fund.trending ? 'bg-orange-100 text-orange-800 hover:bg-orange-100' : 'bg-blue-100 text-blue-800 hover:bg-blue-100'}`}>
                         {fund.trending ? 'Trending' : 'Popular'}
                       </Badge>
-                      <Button size="sm" className="bg-fundeasy-green hover:bg-fundeasy-dark-green text-white">
+                      <Button 
+                        size="sm" 
+                        className="bg-fundeasy-green hover:bg-fundeasy-dark-green text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/start-sip/${fund.id}`);
+                        }}
+                      >
                         Invest
                       </Button>
                     </div>
