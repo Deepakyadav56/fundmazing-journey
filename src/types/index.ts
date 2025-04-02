@@ -3,6 +3,7 @@ import { mockMutualFunds } from "@/utils/mockData";
 
 export type MutualFund = typeof mockMutualFunds[number] & {
   trending?: boolean;
+  logoUrl?: string;
 };
 
 export interface Goal {
@@ -31,7 +32,7 @@ export interface Transaction {
   units: number;
   date: Date;
   status: 'completed' | 'pending' | 'failed';
-  paymentMethod: 'upi' | 'netbanking';
+  paymentMethod: 'upi' | 'netbanking' | 'card';
 }
 
 export interface WatchlistItem {
@@ -79,4 +80,24 @@ export interface NotificationItem {
   time: string;
   read: boolean;
   type?: 'transaction' | 'sip' | 'market' | 'system';
+}
+
+export interface PortfolioSummary {
+  totalInvestment: number;
+  currentValue: number;
+  returns: number;
+  absoluteReturns: number;
+  xirr: number;
+  sipAmount: number;
+  totalFunds: number;
+  activeSips: number;
+}
+
+export interface XIRRCalculationParams {
+  cashflows: Array<{
+    date: Date;
+    amount: number; // Negative for investments, positive for withdrawals
+  }>;
+  currentValue: number;
+  valueDate: Date;
 }

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, TrendingUp, Filter, ChevronRight, Info } from 'lucide-react';
@@ -26,6 +25,8 @@ import { Progress } from '@/components/ui/progress';
 import FilterFunds from '@/components/funds/FilterFunds';
 import TopNavigation from '@/components/funds/TopNavigation';
 import { mockMutualFunds, MutualFund } from '@/utils/mockData';
+import FundCard from '@/components/funds/FundCard';
+import FundLogo from '@/components/funds/FundLogo';
 
 const Explore = () => {
   const navigate = useNavigate();
@@ -194,9 +195,7 @@ const Explore = () => {
                 {featuredAMCs.map((fund, idx) => (
                   <div key={idx} className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center mr-3">
-                        {fund.logo}
-                      </div>
+                      <FundLogo fundName={fund.name} className="mr-3" />
                       <div>
                         <p className="font-medium">{fund.name}</p>
                         <p className="text-xs text-gray-500">{fund.category}</p>
@@ -248,46 +247,11 @@ const Explore = () => {
           </div>
           <div className="space-y-3">
             {popularFunds.map((fund) => (
-              <Card 
-                key={fund.id} 
-                className="card-shadow hover-scale" 
+              <FundCard
+                key={fund.id}
+                fund={fund}
                 onClick={() => navigate(`/fund/${fund.id}`)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex justify-between mb-1">
-                    <h3 className="font-medium line-clamp-1">{fund.name}</h3>
-                  </div>
-                  <div className="flex justify-between mb-3">
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      fund.risk === 'Low' ? 'bg-green-100 text-green-800' : 
-                      fund.risk === 'Moderate' ? 'bg-yellow-100 text-yellow-800' : 
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {fund.risk} Risk
-                    </span>
-                    <span className="text-xs px-2 py-0.5 bg-gray-100 rounded">
-                      {fund.category}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-xs text-gray-500">Min. SIP</p>
-                      <p className="font-medium">₹500</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">AUM</p>
-                      <p className="font-medium">₹{fund.aum} Cr.</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500">3Y Returns</p>
-                      <div className="flex items-center text-fundeasy-green">
-                        <TrendingUp size={14} className="mr-0.5" />
-                        <p className="font-medium">{fund.returns}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              />
             ))}
           </div>
         </div>
@@ -335,85 +299,6 @@ const Explore = () => {
         />
       </div>
     </div>
-  );
-};
-
-interface FundCardProps {
-  fund: MutualFund;
-  onClick: () => void;
-}
-
-const FundCard: React.FC<FundCardProps> = ({ fund, onClick }) => {
-  return (
-    <Card className="card-shadow hover-scale" onClick={onClick}>
-      <CardContent className="p-4">
-        <div className="flex justify-between mb-1">
-          <span className={`text-xs px-2 py-0.5 rounded ${
-            fund.risk === 'Low' ? 'bg-green-100 text-green-800' : 
-            fund.risk === 'Moderate' ? 'bg-yellow-100 text-yellow-800' : 
-            'bg-red-100 text-red-800'
-          }`}>
-            {fund.risk} Risk
-          </span>
-          <span className="text-xs px-2 py-0.5 bg-gray-100 rounded">
-            {fund.category}
-          </span>
-        </div>
-        
-        <h3 className="font-medium mt-1">{fund.name}</h3>
-        
-        <div className="flex items-center justify-between mt-3">
-          <div>
-            <p className="text-xs text-gray-500">NAV</p>
-            <p className="font-medium">₹{fund.navValue.toFixed(2)}</p>
-          </div>
-          
-          <div>
-            <p className="text-xs text-gray-500">AUM</p>
-            <p className="font-medium">₹{fund.aum} Cr.</p>
-          </div>
-          
-          <div className="text-right">
-            <p className="text-xs text-gray-500">1Y Returns</p>
-            <div className="flex items-center text-fundeasy-green">
-              <TrendingUp size={14} className="mr-0.5" />
-              <p className="font-medium">{fund.returns.oneYear}%</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Performance over time */}
-        <div className="mt-3">
-          <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-            <span>1Y</span>
-            <span>3Y</span>
-            <span>5Y</span>
-          </div>
-          <div className="flex space-x-1">
-            <Progress 
-              value={fund.returns.oneYear} 
-              className="h-1" 
-              indicatorClassName={fund.returns.oneYear > 0 ? "bg-green-500" : "bg-red-500"}
-            />
-            <Progress 
-              value={fund.returns.threeYear} 
-              className="h-1" 
-              indicatorClassName={fund.returns.threeYear > 0 ? "bg-green-500" : "bg-red-500"}
-            />
-            <Progress 
-              value={fund.returns.fiveYear} 
-              className="h-1" 
-              indicatorClassName={fund.returns.fiveYear > 0 ? "bg-green-500" : "bg-red-500"}
-            />
-          </div>
-          <div className="flex items-center justify-between text-xs font-medium mt-1">
-            <span>{fund.returns.oneYear}%</span>
-            <span>{fund.returns.threeYear}%</span>
-            <span>{fund.returns.fiveYear}%</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 

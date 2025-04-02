@@ -54,8 +54,30 @@ const FundAnalysis = () => {
     <PageContainer title="Fund Analysis" showBackButton>
       <Card className="mb-4">
         <CardContent className="p-4">
-          <h2 className="text-xl font-semibold mb-2">{fund.name}</h2>
-          <div className="flex justify-between items-baseline">
+          <div className="flex items-center gap-3">
+            <FundLogo fundName={fund.name} size="lg" />
+            
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold mb-1">{fund.name}</h2>
+              <div className="flex gap-2 flex-wrap">
+                <Badge variant="outline" className="bg-gray-50">
+                  {fund.category}
+                </Badge>
+                <Badge 
+                  variant="outline" 
+                  className={
+                    fund.risk === 'Low' ? 'bg-green-50 text-green-700' :
+                    fund.risk === 'Moderate' ? 'bg-yellow-50 text-yellow-700' :
+                    'bg-red-50 text-red-700'
+                  }
+                >
+                  {fund.risk} Risk
+                </Badge>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex justify-between items-baseline mt-4">
             <div>
               <p className="text-2xl font-bold">₹{fund.navValue.toFixed(2)}</p>
               <p className="text-sm text-green-600 flex items-center">
@@ -114,6 +136,17 @@ const FundAnalysis = () => {
                     />
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
+              
+              <div className="flex justify-between mt-4 text-sm">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-fundeasy-green rounded-full mr-1"></div>
+                  <span>Fund</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-gray-400 rounded-full mr-1"></div>
+                  <span>Benchmark</span>
+                </div>
               </div>
             </CardContent>
           </Card>
