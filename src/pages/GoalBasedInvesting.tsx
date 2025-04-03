@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Car, Home, GraduationCap, Heart, Briefcase, Trash2, Calendar, Target, Edit, CheckCircle } from 'lucide-react';
@@ -54,7 +53,7 @@ const goalTemplates = [
   { 
     id: 'education',
     name: 'Child Education',
-    icon: <Graduation className="h-5 w-5" />,
+    icon: <GraduationCap className="h-5 w-5" />,
     color: 'bg-yellow-100 text-yellow-600',
     suggestedAmount: 2000000,
     suggestedYears: 5,
