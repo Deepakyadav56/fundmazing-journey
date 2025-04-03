@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import Transactions from "./pages/Transactions";
 import Goals from "./pages/Goals";
 import SIPDashboard from "./pages/SIPDashboard";
+import SIPPerformance from "./pages/SIPPerformance";
 import InvestmentHistory from "./pages/InvestmentHistory";
 import FundComparison from "./pages/FundComparison";
 import MarketNews from "./pages/MarketNews";
@@ -33,6 +34,8 @@ import StartSIP from "./pages/StartSIP";
 import RedeemFund from "./pages/RedeemFund";
 import ManageSIP from "./pages/ManageSIP";
 import SIPCalculator from "./pages/SIPCalculator";
+import CancelOrder from "./pages/CancelOrder";
+import PaymentFailure from "./pages/PaymentFailure";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +61,7 @@ const App = () => (
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/sip-dashboard" element={<SIPDashboard />} />
+          <Route path="/sip-performance/:id" element={<SIPPerformance />} />
           <Route path="/manage-sip/:id" element={<ManageSIP />} />
           <Route path="/investment-history" element={<InvestmentHistory />} />
           <Route path="/fund-comparison" element={<FundComparison />} />
@@ -68,6 +72,8 @@ const App = () => (
           <Route path="/cart" element={<InvestmentCart />} />
           <Route path="/payment-gateway" element={<PaymentGateway />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-failure" element={<PaymentFailure />} />
+          <Route path="/cancel-order/:id" element={<CancelOrder />} />
           <Route path="/kyc-verification" element={<KYCVerification />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

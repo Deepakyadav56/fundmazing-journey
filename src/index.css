@@ -5,31 +5,53 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Add SF Pro Display font */
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
 @layer base {
   :root {
-    --background: 0 0% 95%;  /* #f2f2f2 */
+    --background: 144 33% 92%;  /* Light green background #e8f5e9 */
     --foreground: 0 0% 13.7%;  /* #232323 */
 
-    --card: 0 0% 95%;  /* #f2f2f2 */
+    --card: 0 0% 100%;  /* White */
     --card-foreground: 0 0% 13.7%;  /* #232323 */
 
-    --popover: 0 0% 95%;  /* #f2f2f2 */
+    --popover: 0 0% 100%;  /* White */
     --popover-foreground: 0 0% 13.7%;  /* #232323 */
 
-    --primary: 153 67% 41%;  /* #22ad78 */
-    --primary-foreground: 0 0% 95%;  /* #f2f2f2 */
+    --primary: 153 67% 41%;  /* #22ad78 Primary green */
+    --primary-foreground: 0 0% 100%;  /* White */
 
-    --secondary: 83 50% 85%;  /* #deebc7 */
+    --secondary: 83 50% 85%;  /* Light green bg for secondary elements */
     --secondary-foreground: 0 0% 13.7%;  /* #232323 */
 
     --muted: 0 0% 90%;
     --muted-foreground: 0 0% 30%;
 
-    --accent: 83 50% 85%;  /* #deebc7 */
-    --accent-foreground: 0 0% 13.7%;  /* #232323 */
+    --accent: 153 67% 41%;  /* #22ad78 */
+    --accent-foreground: 0 0% 100%;  /* White */
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 95%;  /* #f2f2f2 */
+    --destructive-foreground: 0 0% 100%;  /* White */
 
     --border: 0 0% 80%;
     --input: 0 0% 80%;
@@ -77,31 +99,19 @@
   body {
     @apply bg-background text-foreground font-sans;
   }
-
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
-  }
-
-  .green-gradient {
-    @apply bg-gradient-to-r from-fundeasy-green to-[#4AD295] text-white;
-  }
-  
-  .card-shadow {
-    @apply shadow-md hover:shadow-lg transition-shadow duration-300;
-  }
 }
 
 @layer components {
   .app-container {
-    @apply min-h-screen bg-gradient-to-b from-secondary to-white;
+    @apply min-h-screen bg-gradient-to-b from-fundeasy-brand-light-green to-fundeasy-brand-white;
   }
   
   .page-title {
-    @apply text-xl font-semibold text-fundeasy-dark-gray;
+    @apply text-xl font-semibold text-fundeasy-brand-black;
   }
   
   .section-title {
-    @apply text-lg font-medium text-fundeasy-dark-gray mb-3;
+    @apply text-lg font-medium text-fundeasy-brand-black mb-3;
   }
   
   .stat-card {
@@ -121,20 +131,37 @@
   }
   
   .fund-card {
-    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-green hover:shadow-md transition-all duration-200;
+    @apply bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-brand-green hover:shadow-md transition-all duration-200;
   }
 
   .action-card {
-    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-fundeasy-light-gray hover:bg-gray-100 transition-colors;
+    @apply flex flex-col items-center justify-center p-3 rounded-xl bg-fundeasy-brand-white hover:bg-gray-100 transition-colors;
   }
   
   .action-icon {
     @apply w-8 h-8 rounded-full flex items-center justify-center mb-2;
   }
+
+  /* New UI components based on the design */
+  .mint-card {
+    @apply bg-[#deebc7]/40 rounded-xl p-4 border border-[#deebc7]/70;
+  }
+
+  .black-button {
+    @apply bg-fundeasy-brand-black text-fundeasy-brand-white rounded-full py-2 px-4 font-medium;
+  }
+  
+  .green-button {
+    @apply bg-fundeasy-brand-green text-white rounded-full py-2 px-4 font-medium;
+  }
+  
+  .outline-button {
+    @apply border border-fundeasy-brand-black text-fundeasy-brand-black rounded-full py-2 px-4 font-medium;
+  }
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'SF Pro Display', 'Inter', sans-serif;
 }
 
 /* Animation classes */
@@ -179,4 +206,15 @@ body {
   50% {
     transform: translateY(-5px);
   }
+}
+
+/* SF Pro Display specific tweaks */
+.sf-pro {
+  font-family: 'SF Pro Display', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.sf-numerals {
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
 }

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,15 +72,28 @@ const SIPFlow: React.FC<SIPFlowProps> = ({ fund, onComplete, onCancel }) => {
 
   return (
     <Card className="w-full">
-      <CardContent className="p-6">
-        <div className="flex items-center mb-6">
-          <FundLogo fundName={fund.name} size="sm" />
+      <CardHeader className="border-b">
+        <div className="flex items-center">
+          <FundLogo fundName={fund.name} />
           <div className="ml-3">
-            <h3 className="font-medium text-sm">{fund.name}</h3>
+            <CardTitle className="text-lg">{fund.name}</CardTitle>
             <p className="text-xs text-gray-500">{fund.category}</p>
           </div>
         </div>
+        
+        {/* Step Indicator */}
+        <div className="flex items-center justify-center mt-4">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 1 ? 'bg-fundeasy-brand-green text-white' : 'bg-gray-200'}`}>
+            1
+          </div>
+          <div className={`h-1 w-10 ${currentStep === 2 ? 'bg-fundeasy-brand-green' : 'bg-gray-200'}`}></div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 2 ? 'bg-fundeasy-brand-green text-white' : 'bg-gray-200'}`}>
+            2
+          </div>
+        </div>
+      </CardHeader>
 
+      <CardContent className="p-6">
         {currentStep === 1 && (
           <div className="space-y-6">
             <div>
@@ -91,16 +104,17 @@ const SIPFlow: React.FC<SIPFlowProps> = ({ fund, onComplete, onCancel }) => {
                 value={sipDetails.amount}
                 onChange={handleAmountChange}
                 min={100}
-                className="mt-1"
+                className="mt-1 sf-numerals"
               />
               <div className="mt-2 flex flex-wrap gap-2">
                 {predefinedAmounts.map(amount => (
                   <Button
                     key={amount}
                     type="button"
-                    variant={sipDetails.amount === amount ? "default" : "outline"}
+                    variant={sipDetails.amount === amount ? "mint" : "outline"}
                     size="sm"
                     onClick={() => setSipDetails(prev => ({ ...prev, amount }))}
+                    className={sipDetails.amount === amount ? "" : "border-gray-300"}
                   >
                     ₹{amount}
                   </Button>
@@ -135,7 +149,11 @@ const SIPFlow: React.FC<SIPFlowProps> = ({ fund, onComplete, onCancel }) => {
 
             <div className="flex justify-between">
               <Button variant="outline" onClick={onCancel}>Cancel</Button>
-              <Button onClick={nextStep}>
+              <Button 
+                onClick={nextStep}
+                className="bg-fundeasy-brand-black"
+                size="pill"
+              >
                 Next <ArrowRight size={16} className="ml-1" />
               </Button>
             </div>
@@ -181,27 +199,27 @@ const SIPFlow: React.FC<SIPFlowProps> = ({ fund, onComplete, onCancel }) => {
                 onValueChange={handleDurationChange}
                 className="mt-2 space-y-3"
               >
-                <div className="flex items-center">
+                <div className="flex items-center p-3 border rounded-lg hover:border-fundeasy-brand-green hover:bg-[#deebc7]/10 transition-colors">
                   <RadioGroupItem value="Until Cancelled" id="until-cancelled" />
-                  <Label htmlFor="until-cancelled" className="ml-2">Until Cancelled</Label>
+                  <Label htmlFor="until-cancelled" className="ml-2 cursor-pointer">Until Cancelled</Label>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center p-3 border rounded-lg hover:border-fundeasy-brand-green hover:bg-[#deebc7]/10 transition-colors">
                   <RadioGroupItem value="1 Year" id="1year" />
-                  <Label htmlFor="1year" className="ml-2">1 Year</Label>
+                  <Label htmlFor="1year" className="ml-2 cursor-pointer">1 Year</Label>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center p-3 border rounded-lg hover:border-fundeasy-brand-green hover:bg-[#deebc7]/10 transition-colors">
                   <RadioGroupItem value="3 Years" id="3years" />
-                  <Label htmlFor="3years" className="ml-2">3 Years</Label>
+                  <Label htmlFor="3years" className="ml-2 cursor-pointer">3 Years</Label>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center p-3 border rounded-lg hover:border-fundeasy-brand-green hover:bg-[#deebc7]/10 transition-colors">
                   <RadioGroupItem value="5 Years" id="5years" />
-                  <Label htmlFor="5years" className="ml-2">5 Years</Label>
+                  <Label htmlFor="5years" className="ml-2 cursor-pointer">5 Years</Label>
                 </div>
               </RadioGroup>
             </div>
 
-            <div className="bg-fundeasy-light-gray p-3 rounded-md flex items-start">
-              <AlertCircle size={18} className="text-fundeasy-green mt-0.5 mr-2" />
+            <div className="bg-[#deebc7]/30 p-3 rounded-md flex items-start">
+              <AlertCircle size={18} className="text-fundeasy-brand-green mt-0.5 mr-2" />
               <p className="text-xs">
                 Your SIP will be processed on the selected date each {sipDetails.frequency.toLowerCase()}. You can modify or cancel your SIP anytime.
               </p>
@@ -209,8 +227,13 @@ const SIPFlow: React.FC<SIPFlowProps> = ({ fund, onComplete, onCancel }) => {
 
             <div className="flex justify-between">
               <Button variant="outline" onClick={prevStep}>Back</Button>
-              <Button onClick={handleSubmit}>
-                Start SIP
+              <Button 
+                onClick={handleSubmit}
+                className="bg-fundeasy-brand-green"
+                size="pill"
+                disabled={!sipDetails.startDate}
+              >
+                Start SIP <ArrowRight size={16} className="ml-1" />
               </Button>
             </div>
           </div>

@@ -18,6 +18,9 @@ export default {
 				'2xl': '1400px'
 			}
 		},
+		fontFamily: {
+			sans: ['"SF Pro Display"', 'system-ui', 'sans-serif'],
+		},
 		extend: {
 			colors: {
 				border: 'hsl(var(--border))',
@@ -64,10 +67,10 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				fundeasy: {
-					green: '#22ad78',
-					'light-green': '#deebc7',
-					'dark-gray': '#232323',
-					'light-gray': '#f2f2f2',
+					green: '#22ad78', // Changed to match the design (#22ad78)
+					'light-green': '#deebc7', // Light green from the provided theme
+					'dark-gray': '#232323', // Dark color (#232323)
+					'light-gray': '#f2f2f2', // Light color (#f2f2f2)
 					blue: '#2A5BFF',
 					'light-blue': '#5A7AFF',
 					'dark-blue': '#1D40D6',
@@ -75,6 +78,11 @@ export default {
 					'light-red': '#FF8A80',
 					yellow: '#FFD740',
 					'medium-gray': '#E0E0E0',
+					// New colors based on the design
+					'brand-green': '#22ad78', // #22ad78 from the design
+					'brand-light-green': '#deebc7', // Light green from the design
+					'brand-black': '#232323', // #232323 from the design
+					'brand-white': '#f2f2f2', // #f2f2f2 from the design
 				}
 			},
 			borderRadius: {

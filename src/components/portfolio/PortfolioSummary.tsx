@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import AmountDisplay from '@/components/common/AmountDisplay';
 
 interface PortfolioSummaryProps {
   currentValue: number;
@@ -24,22 +25,17 @@ const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
 }) => {
   const [hideAmounts, setHideAmounts] = useState(false);
 
-  const formatAmount = (amount: number): string => {
-    return hideAmounts 
-      ? "₹ XXXXX" 
-      : new Intl.NumberFormat('en-IN', {
-          style: 'currency',
-          currency: 'INR',
-          maximumFractionDigits: 0,
-        }).format(amount);
-  };
-
   return (
-    <Card className="border-0 bg-fundeasy-light-green shadow-sm">
+    <Card className="border-0 bg-[#deebc7]/40 shadow-sm">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-semibold text-fundeasy-dark-gray">Portfolio Summary</CardTitle>
-          <Button variant="ghost" size="icon" onClick={() => setHideAmounts(!hideAmounts)}>
+          <CardTitle className="text-lg font-semibold text-fundeasy-brand-black">Portfolio Summary</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setHideAmounts(!hideAmounts)}
+            className="h-8 w-8 hover:bg-[#deebc7]/60"
+          >
             {hideAmounts ? <EyeOff size={18} /> : <Eye size={18} />}
           </Button>
         </div>
@@ -47,7 +43,7 @@ const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
       <CardContent>
         <div className="space-y-4">
           <div>
-            <div className="text-sm text-gray-500 flex items-center gap-1">
+            <div className="text-sm text-gray-600 flex items-center gap-1">
               Current Value
               <TooltipProvider>
                 <Tooltip>
@@ -60,14 +56,18 @@ const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div className="text-2xl font-bold text-fundeasy-dark-gray">
-              {formatAmount(currentValue)}
+            <div className="text-2xl font-bold text-fundeasy-brand-black sf-numerals">
+              {hideAmounts ? "₹ XXXXX" : new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0,
+              }).format(currentValue)}
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="text-sm text-gray-500 flex items-center gap-1">
+              <div className="text-sm text-gray-600 flex items-center gap-1">
                 Invested
                 <TooltipProvider>
                   <Tooltip>
@@ -80,11 +80,17 @@ const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <div className="font-medium">{formatAmount(investedAmount)}</div>
+              <div className="font-medium sf-numerals">
+                {hideAmounts ? "₹ XXXXX" : new Intl.NumberFormat('en-IN', {
+                  style: 'currency',
+                  currency: 'INR',
+                  maximumFractionDigits: 0,
+                }).format(investedAmount)}
+              </div>
             </div>
             
             <div>
-              <div className="text-sm text-gray-500 flex items-center gap-1">
+              <div className="text-sm text-gray-600 flex items-center gap-1">
                 XIRR
                 <TooltipProvider>
                   <Tooltip>
@@ -98,24 +104,39 @@ const PortfolioSummary: React.FC<PortfolioSummaryProps> = ({
                 </TooltipProvider>
               </div>
               <div className={cn(
-                "font-medium flex items-center",
-                xirr >= 0 ? "text-fundeasy-green" : "text-fundeasy-red"
+                "font-medium flex items-center sf-numerals",
+                xirr >= 0 ? "text-fundeasy-brand-green" : "text-fundeasy-red"
               )}>
-                {xirr >= 0 ? <ArrowUp size={16} className="mr-1" /> : <ArrowDown size={16} className="mr-1" />}
-                {xirr}%
+                {hideAmounts ? "XX%" : (
+                  <>
+                    {xirr >= 0 ? <ArrowUp size={16} className="mr-1" /> : <ArrowDown size={16} className="mr-1" />}
+                    {xirr}%
+                  </>
+                )}
               </div>
             </div>
             
             <div>
-              <div className="text-sm text-gray-500">Returns</div>
+              <div className="text-sm text-gray-600">Returns</div>
               <div className={cn(
-                "font-medium flex items-center",
-                absoluteReturn >= 0 ? "text-fundeasy-green" : "text-fundeasy-red"
+                "font-medium flex items-center sf-numerals",
+                absoluteReturn >= 0 ? "text-fundeasy-brand-green" : "text-fundeasy-red"
               )}>
-                {absoluteReturn >= 0 ? "+" : ""}{formatAmount(absoluteReturn)}
+                {hideAmounts ? "₹ XXXXX" : (
+                  <>
+                    {absoluteReturn >= 0 ? "+" : ""}
+                    {new Intl.NumberFormat('en-IN', {
+                      style: 'currency',
+                      currency: 'INR',
+                      maximumFractionDigits: 0,
+                    }).format(Math.abs(absoluteReturn))}
+                  </>
+                )}
               </div>
-              <Badge variant={absoluteReturnPercentage >= 0 ? "success" : "destructive"} className="mt-1">
-                {absoluteReturnPercentage >= 0 ? "+" : ""}{absoluteReturnPercentage.toFixed(2)}%
+              <Badge variant={absoluteReturnPercentage >= 0 ? "success" : "destructive"} className="mt-1 sf-numerals">
+                {hideAmounts ? "XX%" : (
+                  <>{absoluteReturnPercentage >= 0 ? "+" : ""}{absoluteReturnPercentage.toFixed(2)}%</>
+                )}
               </Badge>
             </div>
           </div>
