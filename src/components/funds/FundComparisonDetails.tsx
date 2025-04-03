@@ -10,32 +10,17 @@ import CompareCard from './CompareCard';
 import { mockMutualFunds } from '@/utils/mockData';
 import FundLogoImage from './FundLogoImage';
 import { Input } from '@/components/ui/input';
-
-interface Fund {
-  id: string;
-  name: string;
-  amc: string;
-  returns: {
-    oneYear: number;
-    threeYear: number;
-    fiveYear: number;
-  };
-  nav: number;
-  aum: string;
-  risk: string;
-  category: string;
-  expenseRatio: number;
-}
+import { MutualFund } from '@/types';
 
 interface FundComparisonDetailsProps {
-  initialFunds?: Fund[];
+  initialFunds?: MutualFund[];
 }
 
 const FundComparisonDetails: React.FC<FundComparisonDetailsProps> = ({
   initialFunds = []
 }) => {
   const navigate = useNavigate();
-  const [funds, setFunds] = useState<Fund[]>(initialFunds.length ? initialFunds : [mockMutualFunds[0]]);
+  const [funds, setFunds] = useState<MutualFund[]>(initialFunds.length ? initialFunds : [mockMutualFunds[0]]);
   const [showFundSelector, setShowFundSelector] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -50,7 +35,7 @@ const FundComparisonDetails: React.FC<FundComparisonDetailsProps> = ({
     setFunds(funds.filter((_, i) => i !== index));
   };
   
-  const handleSelectFund = (fund: Fund) => {
+  const handleSelectFund = (fund: MutualFund) => {
     if (funds.some(f => f.id === fund.id)) return;
     
     setFunds([...funds, fund]);
@@ -60,8 +45,10 @@ const FundComparisonDetails: React.FC<FundComparisonDetailsProps> = ({
   
   const filteredFunds = mockMutualFunds
     .filter(fund => !funds.some(f => f.id === fund.id))
-    .filter(fund => fund.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                   fund.amc.toLowerCase().includes(searchQuery.toLowerCase()));
+    .filter(fund => 
+      fund.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      fund.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
   
   const parameterList = [
     { name: 'Returns', tabs: ['1Y', '3Y', '5Y'] },
@@ -76,7 +63,17 @@ const FundComparisonDetails: React.FC<FundComparisonDetailsProps> = ({
         {funds.map((fund, index) => (
           <CompareCard 
             key={fund.id} 
-            fund={fund}
+            fund={{
+              id: fund.id,
+              name: fund.name,
+              amc: fund.category, // Using category as AMC since MutualFund doesn't have amc
+              returns: fund.returns,
+              nav: fund.navValue, // Using navValue as nav
+              aum: fund.aum.toString(), // Converting aum to string
+              risk: fund.risk,
+              category: fund.category,
+              expenseRatio: fund.expenseRatio
+            }}
             onRemove={() => handleRemoveFund(index)}
           />
         ))}
@@ -200,7 +197,7 @@ const FundComparisonDetails: React.FC<FundComparisonDetailsProps> = ({
                                 )}
                                 {tab === 'Fund Manager' && (
                                   <span className="text-base">
-                                    {['Prashant Jain', 'Sohini Andani', 'Neelesh Surana', 'Anoop Bhaskar'][Math.floor(Math.random() * 4)]}
+                                    {fund.fundManager}
                                   </span>
                                 )}
                                 {tab === 'Rating' && (

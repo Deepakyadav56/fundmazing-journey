@@ -3,26 +3,28 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Plus, X, TrendingUp } from 'lucide-react';
+import { ArrowRight, Plus, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import FundLogoImage from './FundLogoImage';
 
-interface CompareCardProps {
-  fund?: {
-    id: string;
-    name: string;
-    amc: string;
-    returns: {
-      oneYear: number;
-      threeYear: number;
-      fiveYear: number;
-    };
-    nav: number;
-    aum: string;
-    risk: string;
-    category: string;
-    expenseRatio: number;
+interface Fund {
+  id: string;
+  name: string;
+  amc: string;
+  returns: {
+    oneYear: number;
+    threeYear: number;
+    fiveYear: number;
   };
+  nav: number;
+  aum: string;
+  risk: string;
+  category: string;
+  expenseRatio: number;
+}
+
+interface CompareCardProps {
+  fund?: Fund;
   onRemove?: () => void;
   onAdd?: () => void;
   isEmpty?: boolean;
