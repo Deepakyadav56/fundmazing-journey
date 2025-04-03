@@ -29,13 +29,19 @@ import Notifications from "./pages/Notifications";
 import InvestmentCart from "./pages/InvestmentCart";
 import PaymentGateway from "./pages/PaymentGateway";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailure from "./pages/PaymentFailure";
 import KYCVerification from "./pages/KYCVerification";
 import StartSIP from "./pages/StartSIP";
 import RedeemFund from "./pages/RedeemFund";
 import ManageSIP from "./pages/ManageSIP";
 import SIPCalculator from "./pages/SIPCalculator";
 import CancelOrder from "./pages/CancelOrder";
-import PaymentFailure from "./pages/PaymentFailure";
+import KYCFlow from "./pages/KYCFlow";
+import RiskProfiling from "./pages/RiskProfiling";
+import RiskResults from "./pages/RiskResults";
+import BankAccounts from "./pages/BankAccounts";
+import MandateManagement from "./pages/MandateManagement";
+import GoalBasedInvesting from "./pages/GoalBasedInvesting";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +81,15 @@ const App = () => (
           <Route path="/payment-failure" element={<PaymentFailure />} />
           <Route path="/cancel-order/:id" element={<CancelOrder />} />
           <Route path="/kyc-verification" element={<KYCVerification />} />
+          
+          {/* New Routes */}
+          <Route path="/kyc-flow" element={<KYCFlow />} />
+          <Route path="/risk-profiling" element={<RiskProfiling />} />
+          <Route path="/risk-results" element={<RiskResults />} />
+          <Route path="/bank-accounts" element={<BankAccounts />} />
+          <Route path="/mandate-management" element={<MandateManagement />} />
+          <Route path="/goal-based-investing" element={<GoalBasedInvesting />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
