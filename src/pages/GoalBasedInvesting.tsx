@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Car, Home, Graduation, Heart, Briefcase, Trash2, Calendar, Target, Edit, CheckCircle } from 'lucide-react';
+import { Plus, Car, Home, GraduationCap, Heart, Briefcase, Trash2, Calendar, Target, Edit, CheckCircle } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
