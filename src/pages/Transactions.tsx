@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { Search, Filter, Download, ChevronDown, SlidersHorizontal } from 'lucide-react';
@@ -210,7 +209,6 @@ const Transactions = () => {
                 <DialogTrigger asChild>
                   <div 
                     className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:border-fundeasy-green hover:shadow-md transition-all duration-200 cursor-pointer"
-                    onClick={() => setSelectedTransaction(transaction)}
                   >
                     <div className="flex justify-between">
                       <div>

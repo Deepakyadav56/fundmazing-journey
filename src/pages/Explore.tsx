@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, TrendingUp, Filter, ChevronRight, Info } from 'lucide-react';
@@ -79,11 +80,8 @@ const Explore = () => {
     { name: 'FundEasy Large Cap Fund', returns: '12.09%', category: 'Large Cap', logo: '📊' },
   ];
 
-  // Popular funds
-  const popularFunds = mockMutualFunds.slice(0, 4).map(fund => ({
-    ...fund,
-    returns: fund.returns.threeYear.toFixed(2) + '%'
-  }));
+  // Popular funds - fix the type error by properly structuring the data
+  const popularFunds = mockMutualFunds.slice(0, 4);
 
   const resetFilters = () => {
     setCategoryFilter('');

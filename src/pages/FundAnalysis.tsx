@@ -1,15 +1,27 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, PieChart, TrendingUp, Users, Info, Calendar } from 'lucide-react';
+import { LineChart, PieChart, TrendingUp, Users, Info, Calendar, ArrowUpRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import PageContainer from '@/components/layout/PageContainer';
 import FundLogo from '@/components/funds/FundLogo';
 import { useNavigate, useParams } from 'react-router-dom';
-import { mockFunds } from '@/utils/mockData';
+import { mockMutualFunds } from '@/utils/mockData';
 import { cn } from '@/lib/utils';
+import {
+  ResponsiveContainer,
+  LineChart as RechartLineChart,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Line,
+  Bar
+} from 'recharts';
 
 const performanceData = [
   { month: 'Jan', fundReturn: 1.2, benchmarkReturn: 0.8 },
@@ -36,7 +48,7 @@ const portfolioData = [
 
 const FundAnalysis = () => {
   const { id } = useParams<{ id: string }>();
-  const fund = mockFunds.find(f => f.id === id);
+  const fund = mockMutualFunds.find(f => f.id === id);
   
   if (!fund) {
     return (
@@ -112,7 +124,7 @@ const FundAnalysis = () => {
               
               <div className="h-64 w-full">
                 <ResponsiveContainer>
-                  <LineChart data={performanceData}>
+                  <RechartLineChart data={performanceData}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" />
                     <YAxis />
@@ -132,7 +144,7 @@ const FundAnalysis = () => {
                       strokeWidth={2} 
                       strokeDasharray="5 5"
                     />
-                  </LineChart>
+                  </RechartLineChart>
                 </ResponsiveContainer>
               </div>
               
