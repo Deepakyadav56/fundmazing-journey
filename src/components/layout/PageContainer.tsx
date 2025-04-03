@@ -1,7 +1,7 @@
 
 import React, { ReactNode } from 'react';
 import BottomNavbar from './BottomNavbar';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,7 @@ interface PageContainerProps {
   contentClassName?: string;
   headerClassName?: string;
   headerRight?: ReactNode;
+  scrollable?: boolean;
 }
 
 const PageContainer = ({ 
@@ -27,24 +28,25 @@ const PageContainer = ({
   titleClassName,
   contentClassName,
   headerClassName,
-  headerRight
+  headerRight,
+  scrollable = true,
 }: PageContainerProps) => {
   const navigate = useNavigate();
   
   return (
-    <div className={cn("min-h-screen bg-gradient-to-b from-fundeasy-light-green to-white pb-16", className)}>
+    <div className={cn("flex flex-col min-h-screen bg-gradient-to-b from-fundeasy-light-green to-white", className)}>
       {(title || showBackButton) && (
-        <div className={cn("sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm", headerClassName)}>
-          <div className="flex items-center justify-between p-4">
+        <div className={cn("sticky top-0 z-10 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100", headerClassName)}>
+          <div className="flex items-center justify-between py-3 px-4">
             <div className="flex items-center gap-2">
               {showBackButton && (
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="h-8 w-8 rounded-full"
+                  className="h-9 w-9 rounded-full bg-fundeasy-light-gray hover:bg-fundeasy-medium-gray"
                   onClick={() => navigate(-1)}
                 >
-                  <ArrowLeft size={18} />
+                  <ChevronLeft size={20} className="text-fundeasy-dark-gray" />
                 </Button>
               )}
               {title && (
@@ -59,7 +61,13 @@ const PageContainer = ({
           </div>
         </div>
       )}
-      <div className={cn("p-4 animate-fade-in", contentClassName)}>
+      <div 
+        className={cn(
+          "flex-1 p-4 animate-fade-in", 
+          scrollable ? "overflow-y-auto" : "", 
+          contentClassName
+        )}
+      >
         {children}
       </div>
       {showNavbar && <BottomNavbar />}
