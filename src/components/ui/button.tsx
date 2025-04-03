@@ -21,6 +21,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         black: "bg-fundeasy-brand-black text-white hover:bg-fundeasy-brand-black/90",
         mint: "bg-[#deebc7] text-fundeasy-brand-black hover:bg-[#d2deb9]",
+        shaded: "bg-gray-100 text-fundeasy-brand-black hover:bg-gray-200",
       },
       size: {
         default: "h-10 px-4 py-2",

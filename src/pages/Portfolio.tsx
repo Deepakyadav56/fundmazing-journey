@@ -23,7 +23,7 @@ import { mockMutualFunds, mockUserInvestments } from '@/utils/mockData';
 
 const Portfolio = () => {
   const navigate = useNavigate();
-  const [hidePortfolio, setHidePortfolio] = useState(false);
+  const [hideFinancialDetails, setHideFinancialDetails] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
 
   // Mock portfolio summary
@@ -105,10 +105,10 @@ const Portfolio = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => setHidePortfolio(!hidePortfolio)}
+              onClick={() => setHideFinancialDetails(!hideFinancialDetails)}
               className="h-8 w-8"
             >
-              {hidePortfolio ? <EyeOff size={18} /> : <Eye size={18} />}
+              {hideFinancialDetails ? <EyeOff size={18} /> : <Eye size={18} />}
             </Button>
           </div>
           
@@ -116,14 +116,14 @@ const Portfolio = () => {
             <div>
               <p className="text-sm text-gray-500">Invested</p>
               <p className="text-xl font-semibold">
-                {hidePortfolio ? '••••••' : `₹${portfolioSummary.totalInvestment.toLocaleString()}`}
+                {hideFinancialDetails ? '••••••' : `₹${portfolioSummary.totalInvestment.toLocaleString()}`}
               </p>
             </div>
             
             <div>
               <p className="text-sm text-gray-500">Current Value</p>
               <p className="text-xl font-semibold">
-                {hidePortfolio ? '••••••' : `₹${portfolioSummary.currentValue.toLocaleString()}`}
+                {hideFinancialDetails ? '••••••' : `₹${portfolioSummary.currentValue.toLocaleString()}`}
               </p>
             </div>
             
@@ -144,14 +144,10 @@ const Portfolio = () => {
                 </TooltipProvider>
               </div>
               <p className="text-lg font-semibold text-fundeasy-green">
-                {hidePortfolio ? '••••••' : (
-                  <>
-                    {portfolioSummary.returns}% 
-                    <span className="text-xs ml-1">
-                      (₹{portfolioSummary.absoluteReturns.toLocaleString()})
-                    </span>
-                  </>
-                )}
+                {portfolioSummary.returns}% 
+                <span className="text-xs ml-1">
+                  {hideFinancialDetails ? '(••••••)' : `(₹${portfolioSummary.absoluteReturns.toLocaleString()})`}
+                </span>
               </p>
             </div>
             
@@ -172,7 +168,7 @@ const Portfolio = () => {
                 </TooltipProvider>
               </div>
               <p className="text-lg font-semibold text-fundeasy-green">
-                {hidePortfolio ? '••••••' : `${portfolioSummary.xirr}%`}
+                {portfolioSummary.xirr}%
               </p>
             </div>
           </div>
@@ -190,13 +186,13 @@ const Portfolio = () => {
       <div className="grid grid-cols-2 gap-3 mb-6">
         <StatsCard
           title="Active SIPs"
-          value={hidePortfolio ? "••" : portfolioSummary.activeSips.toString()}
+          value={portfolioSummary.activeSips.toString()}
           subtitle="Next SIP in 5 days"
           icon={<Clock size={18} />}
         />
         <StatsCard
           title="Total Funds"
-          value={hidePortfolio ? "••" : portfolioSummary.totalFunds.toString()}
+          value={portfolioSummary.totalFunds.toString()}
           subtitle="Across categories"
           icon={<PieChart size={18} />}
         />
@@ -255,14 +251,14 @@ const Portfolio = () => {
                     <div>
                       <p className="text-xs text-gray-500">Invested</p>
                       <p className="font-medium">
-                        {hidePortfolio ? '••••••' : `₹${holding.amount.toLocaleString()}`}
+                        {hideFinancialDetails ? '••••••' : `₹${holding.amount.toLocaleString()}`}
                       </p>
                     </div>
                     
                     <div className="text-right">
                       <p className="text-xs text-gray-500">Current Value</p>
                       <p className="font-medium">
-                        {hidePortfolio ? '••••••' : `₹${holding.currentValue?.toLocaleString()}`}
+                        {hideFinancialDetails ? '••••••' : `₹${holding.currentValue?.toLocaleString()}`}
                       </p>
                     </div>
                   </div>
@@ -277,7 +273,7 @@ const Portfolio = () => {
                           <ArrowDown size={12} className="mr-0.5" />
                         )}
                         <span className="font-medium">
-                          {hidePortfolio ? '••••' : `${Math.abs(holding.returnPercentage).toFixed(2)}%`}
+                          {holding.returnPercentage.toFixed(2)}%
                         </span>
                       </div>
                     </div>

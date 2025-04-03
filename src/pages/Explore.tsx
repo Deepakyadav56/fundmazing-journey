@@ -64,14 +64,74 @@ const Explore = () => {
     return 0;
   });
 
-  // Collections for quick filters
+  // Collections for quick filters with improved icons that match the design
   const collections = [
-    { name: 'High Return', icon: '📈', color: 'bg-green-100 text-green-800' },
-    { name: 'SIP with ₹500', icon: '💸', color: 'bg-blue-100 text-blue-800' },
-    { name: 'Tax Saving', icon: '💰', color: 'bg-amber-100 text-amber-800' },
-    { name: 'Large Cap', icon: '🏢', color: 'bg-purple-100 text-purple-800' },
-    { name: 'Mid Cap', icon: '🏬', color: 'bg-indigo-100 text-indigo-800' },
-    { name: 'Small Cap', icon: '🏠', color: 'bg-pink-100 text-pink-800' },
+    { 
+      name: 'High Return', 
+      icon: <div className="text-lg w-8 h-8 mx-auto flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500">
+          <path d="M3 3v18h18" />
+          <path d="m19 9-5 5-4-4-4 4" />
+        </svg>
+      </div>, 
+      color: 'bg-red-50 text-red-800' 
+    },
+    { 
+      name: 'SIP with ₹500', 
+      icon: <div className="text-lg w-8 h-8 mx-auto flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-500">
+          <rect width="20" height="14" x="2" y="5" rx="2" />
+          <line x1="2" y1="10" x2="22" y2="10" />
+        </svg>
+      </div>, 
+      color: 'bg-green-50 text-green-800' 
+    },
+    { 
+      name: 'Tax Saving', 
+      icon: <div className="text-lg w-8 h-8 mx-auto flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-yellow-500">
+          <path d="M20.9 16.7c.6-.6.6-1.5 0-2.1a2 2 0 0 0-2.7-.2 1 1 0 0 0-.3.2l-3.8 3.8-3.8-3.8c-.6-.6-1.5-.6-2.1 0s-.6 1.5 0 2.1l4.8 4.8c.6.6 1.5.6 2.1 0Z" />
+          <path d="M20.9 7.3c.6-.6.6-1.5 0-2.1s-1.5-.6-2.1 0L14 9.9 9.2 5.1c-.6-.6-1.5-.6-2.1 0s-.6 1.5 0 2.1l4.8 4.8c.6.6 1.5.6 2.1 0Z" />
+        </svg>
+      </div>, 
+      color: 'bg-yellow-50 text-yellow-800' 
+    },
+    { 
+      name: 'Large Cap', 
+      icon: <div className="text-lg w-8 h-8 mx-auto flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-500">
+          <rect x="2" y="3" width="20" height="18" rx="2" />
+          <path d="M8 7v10" />
+          <path d="M12 7v10" />
+          <path d="M16 7v10" />
+        </svg>
+      </div>, 
+      color: 'bg-blue-50 text-blue-800' 
+    },
+    { 
+      name: 'Mid Cap', 
+      icon: <div className="text-lg w-8 h-8 mx-auto flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-500">
+          <rect x="2" y="3" width="20" height="18" rx="2" />
+          <path d="M8 10v3" />
+          <path d="M12 7v9" />
+          <path d="M16 10v3" />
+        </svg>
+      </div>, 
+      color: 'bg-purple-50 text-purple-800' 
+    },
+    { 
+      name: 'Small Cap', 
+      icon: <div className="text-lg w-8 h-8 mx-auto flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-orange-500">
+          <path d="M2 10h20" />
+          <path d="M2 14h20" />
+          <path d="M6 22V2" />
+          <path d="M18 22V2" />
+        </svg>
+      </div>, 
+      color: 'bg-orange-50 text-orange-800' 
+    },
   ];
 
   // Featured AMCs
@@ -168,8 +228,8 @@ const Explore = () => {
             {collections.map((collection, idx) => (
               <Card key={idx} className="hover:shadow-md transition-all cursor-pointer">
                 <CardContent className="p-3 text-center">
-                  <div className="text-lg mb-1">{collection.icon}</div>
-                  <p className="text-xs font-medium">{collection.name}</p>
+                  {collection.icon}
+                  <p className="text-xs font-medium mt-1">{collection.name}</p>
                 </CardContent>
               </Card>
             ))}

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { Building } from 'lucide-react';
 
 interface FundLogoImageProps {
   fundName: string;
@@ -16,14 +17,14 @@ const FundLogoImage: React.FC<FundLogoImageProps> = ({
   // Generate a consistent background color based on the fund name
   const getColorClass = (name: string) => {
     const colors = [
-      'bg-gradient-to-br from-blue-400 to-blue-600',
-      'bg-gradient-to-br from-green-400 to-green-600', 
-      'bg-gradient-to-br from-amber-400 to-amber-600',
-      'bg-gradient-to-br from-purple-400 to-purple-600',
-      'bg-gradient-to-br from-red-400 to-red-600',
-      'bg-gradient-to-br from-indigo-400 to-indigo-600',
-      'bg-gradient-to-br from-pink-400 to-pink-600',
-      'bg-gradient-to-br from-emerald-400 to-emerald-600',
+      'bg-red-100',
+      'bg-blue-100',
+      'bg-green-100', 
+      'bg-yellow-100',
+      'bg-purple-100',
+      'bg-pink-100',
+      'bg-indigo-100',
+      'bg-emerald-100',
     ];
     
     // Use a simple hash function to get a consistent index
@@ -36,7 +37,16 @@ const FundLogoImage: React.FC<FundLogoImageProps> = ({
   };
   
   const getInitials = (name: string) => {
-    // Split by spaces or hyphens
+    // For specific AMCs, return their first letter
+    const knownAMCs = ['HDFC', 'SBI', 'ICICI', 'Axis', 'Kotak', 'Nippon', 'Aditya', 'Mirae'];
+    
+    for (const amc of knownAMCs) {
+      if (name.includes(amc)) {
+        return amc[0];
+      }
+    }
+    
+    // Default: Split by spaces or hyphens
     const words = name.split(/[\s-]+/);
     
     // Take first letters (max 2)
@@ -63,13 +73,13 @@ const FundLogoImage: React.FC<FundLogoImageProps> = ({
   return (
     <div 
       className={cn(
-        'rounded-full flex items-center justify-center text-white font-semibold shadow-sm',
+        'rounded-full flex items-center justify-center text-black font-medium shadow-sm',
         colorClass,
         sizeClasses[size],
         className
       )}
     >
-      {initials}
+      <Building className="h-4 w-4" />
     </div>
   );
 };

@@ -82,7 +82,9 @@ const InvestmentSummaryCard: React.FC<InvestmentSummaryCardProps> = ({
                       </span>
                     </>
                   ) : (
-                    '••••••'
+                    <>
+                      {returnsPercentage.toFixed(2)}%
+                    </>
                   )}
                 </p>
               </div>

@@ -4,7 +4,7 @@ import { TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { MutualFund } from '@/utils/mockData';
-import FundLogo from './FundLogo';
+import FundLogoImage from './FundLogoImage';
 
 interface FundCardProps {
   fund: MutualFund;
@@ -16,7 +16,7 @@ const FundCard: React.FC<FundCardProps> = ({ fund, onClick }) => {
     <Card className="card-shadow hover-scale" onClick={onClick}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3 mb-2">
-          <FundLogo fundName={fund.name} />
+          <FundLogoImage fundName={fund.name} />
           
           <div className="flex-1">
             <h3 className="font-medium line-clamp-2">{fund.name}</h3>
